@@ -3,3 +3,4 @@
 **/*.pdf
 **/*.o
 **/__pycache__/
+**/*.egg-info/
