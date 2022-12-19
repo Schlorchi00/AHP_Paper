@@ -2,13 +2,22 @@ import openpyxl
 
 from ahp.cost_calculation import create_df, total_cost
 
-def main():
-    # set path
+from argparse import ArgumentParser
 
-    path_costtable = str(input('Put in path to your cost table: '))
+def parse_args():
+    parser = ArgumentParser(description="File for running a cost calculation.")
+    parser.add_argument("-i", "--input", type=str, help="Location of the cost excel file", required=True)
+    args = parser.parse_args()
+    return vars(args)
+
+
+# call main function - safeguard for external includes
+if __name__ == "__main__":
+    args=parse_args()
+    # set path
+    path_costtable = args['input']
 
     # load data from excel workbook
-
     wb = openpyxl.load_workbook(path_costtable)
     shredd = wb['shredding']
     extr = wb['extrusion']
@@ -24,13 +33,6 @@ def main():
     cost_list = [df_shredd, df_extr, df_gran, df_con]
 
     tot_cost = total_cost(cost_list)
-
-
-
-# call main function - safeguard for external includes
-if __name__ == "__main__":
-    main()
-
 
 
 
