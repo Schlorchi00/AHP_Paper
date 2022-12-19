@@ -38,6 +38,10 @@ chmod +x cost_calculation.py
 ./cost_calculation.py
 ```
 
+### Usage with Conda Environment and argument parser
+1. Activate conda environment by typing `conda activate ahp` after running the [install steps](#conda-usage).
+2. navigate to the base directory (`cd <base_directory_of_environment>` - mostly AHP_Paper)
+3. run the script by typing (`python scripts/cost_calculation.py -i <path to the data file>` - path is mostly data/cost/cost_polymers.xlsx)
 
 ## Description
 
