@@ -1,6 +1,8 @@
 # AHP_Monte_Carlo
 
-Package of scripts to apply an AHP with Monte Carlo simulation
+Package of scripts to apply an AHP with Monte Carlo simulation.
+
+![Description of the image of the AHP structure](./docs/cost_model.jpg)
 
 ## Installation
 
