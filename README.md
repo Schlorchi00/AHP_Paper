@@ -16,6 +16,9 @@ Clone this repository onto your local machine.
 git clone https://github.com/Schlorchi00/AHP_Paper.git
 ```
 
+### Conda usage
+install environment `ahp` by typing `conda env create --file ahp_env.txt`
+
 ## Usage
 
 ##cost_calculation.py
