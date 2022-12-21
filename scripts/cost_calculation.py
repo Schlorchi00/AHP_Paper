@@ -33,6 +33,7 @@ if __name__ == "__main__":
     cost_list = [df_shredd, df_extr, df_gran, df_con]
 
     tot_cost = total_cost(cost_list)
+    print(tot_cost)
 
 
 
