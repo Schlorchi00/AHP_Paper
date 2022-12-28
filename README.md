@@ -19,8 +19,9 @@ git clone https://github.com/Schlorchi00/AHP_Paper.git
 ```
 
 ### Conda usage
-install environment `ahp` by typing `conda env create --file ahp_env.txt`
-
+install environment `ahp` by typing `conda env create --file ahp_env.txt` or `conda en create --file ahp_env.yml` on Mac.
+Dump environments by running `conda env export --no-builds > ahp_env.yml`
+activate environments by running `conda activate ahp`
 Active environments are denoted by a `(ahp)` preceeding the `user@host:` notation
 
 ### Pip installation
