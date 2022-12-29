@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--input" , "data/cost/cost_table.xlsx"
+                "--input" , "config/files.yml"
             ]
         }
     ]
