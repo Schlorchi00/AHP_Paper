@@ -1,6 +1,9 @@
 import pandas as pd
 
-def read_excel(fpath : str) -> pd.DataFrame:
+def read_excel(fpath : str) -> list:
     # multiple workbooks
-
-    pass
+    with open(fpath, 'rb') as f:
+        df = pd.read_excel(f, sheet_name=None)
+        # df_list = [df.parse(sheet) for sheet in df.sheet_names]
+    # return df_list
+    return df
