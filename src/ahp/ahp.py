@@ -10,6 +10,10 @@ class AHP:
     # Placeholder for the consistency ratio values
     CR = [0, 0, 0, 0]
 
+    # Accepteable values
+    pos = [i for i in range(1,10)]
+    neg = [1./i for i in range(2,10)]
+    ACCEPTED = np.array(neg[::-1] + pos)
     def __init__(self, arr : np.ndarray, indices : list, name : str = None) -> None:
         self.arr = self._calc_arr(arr)
         self.indices = indices
@@ -17,15 +21,27 @@ class AHP:
 
     @classmethod
     def _calc_arr(cls, arr : np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Function to calculate the lower triangular matrix not implemented yet")
+        """
+            Calculates the matrix by using the values of the upper triangular matrix for the lower triangular matrix
+        """
+        i_lower = np.tril_indices(arr.shape[0], -1)
+        arr[i_lower] = arr.T[i_lower]
+        cls.__check_vals(arr)
+        return arr
 
     @classmethod
     def __check_vals(cls, arr : np.ndarray) -> bool:
         """
             Function to check the values of the array, if they are within defined ranges
+            TODO: use the numpy tolerance checks here
         """
-        raise NotImplementedError("Functionto check value ranges and consistencies is not implemented yet")
-
+        unq_vals = np.unique(arr)
+        
+        set_in = set(arr.flatten())
+        set_test = set(cls.ACCEPTED)
+        # assert set_in.issubset(set_test), f"Input values not a subset of valid values: {cls.ACCEPTED}"
+        return True
+        
     def is_consistent(self) -> bool:
         """
             Function to calculate whether an array is consistent
@@ -37,7 +53,7 @@ class AHP:
         """
             Function to get an AHP element from a 
         """
-        raise NotImplementedError("Function to get an ahp")
+        return cls(df.values, df.columns.to_list(), name = name)
     
     @classmethod
     def from_file(cls, path : str):
