@@ -25,7 +25,7 @@ class AHP:
             Calculates the matrix by using the values of the upper triangular matrix for the lower triangular matrix
         """
         i_lower = np.tril_indices(arr.shape[0], -1)
-        arr[i_lower] = arr.T[i_lower]
+        arr[i_lower] = 1./ arr.T[i_lower]
         cls.__check_vals(arr)
         return arr
 

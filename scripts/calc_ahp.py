@@ -16,6 +16,6 @@ if __name__=="__main__":
     sl = []
     for fl in file_list:
         fcontent = read_excel(fl)
-        print(fl)
+        print(fcontent)
 
     print("Test Debug Line")

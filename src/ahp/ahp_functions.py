@@ -5,76 +5,26 @@
 ##import libraries
 
 import numpy as np
-import scipy.sparse.linalg as sc
+# import scipy.sparse.linalg as sc
 
 ########################################################################################################################
 ##constants
 
 #random indices for consistency check (Saaty)
-RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
 
 ########################################################################################################################
 ##calculation functions
 
-#consistency check for pairwise comparison matrix of the criteria
-def consistency_check(arr_criteria, criteria_number,RI):
-    '''
-    Performs the consistency check of the ongoing matrix operations
 
-    :param arr_criteria: matrix with pairwise compared values
-    :param criteria_number: size of the matrix
-    :param RI: random indices
-    :return: consistency result
-    '''
-
-    lambdamax = np.amax(np.linalg.eigvals(arr_criteria).real)
-    CI =(lambdamax - criteria_number) / (criteria_number -1)
-    CR = CI/RI[criteria_number-1]
-
-    return CR
-
-#calculation of priority vector
-def priority_vector(arr_criteria):
-    '''
-    Calculation of the priority vector
-
-    :param arr_criteria: matrix with pairwise compared values
-    :return: priority vector
-    '''
-    val,vec = sc.eigs(arr_criteria, k=1, which='LM')
-    eigcriteria = np.real(vec)
-    w = eigcriteria/np.sum(eigcriteria)
-    w = np.array(w).ravel()
-
-    return w
-
-#normalization I
-def normalize_1(arr,rownumber):
-    '''
-    normalization, if considering highest value as reference
-
-    :param arr: array of normalizing values
-    :param rownumber: size of array to normalize
-    :return: normalized array
-    '''
-    return ((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min())
-
-#normalization II
-def normalize_2(arr,rownumber):
-    '''
-    normalization, if considering smallest value as reference
-
-    :param arr: array of normalizing values
-    :param rownumber: size of array to normalize
-    :return: normalized array
-    '''
-    return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
 
 
 ########################################################################################################################
 
 #tree structure AHP
 class TreeNode:
+
+    RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
+
     def __init__(self, data):
         '''
         Initialization of the hierarchical tree structure
@@ -119,98 +69,88 @@ class TreeNode:
             for child in self.children:
                 child.print_tree()
 
-def build_AHP_tree():
-    '''
-    Creation of a hierarchical tree structure
+    def __len__(self):
+        """
+            Placeholder for actual length here
+        """
+        return len(self.children)
 
-    :return: visualized tree
-    '''
+    def __getitem__(self, index):
+        """
+            function to index with []. May have to accept a tuple here
+        """
+        raise NotImplementedError
 
-    ##0 Level
-    root = TreeNode('Meaningfullness_of_Recycling')
+    def __setitem__(self, index, value):
+        raise NotImplementedError
 
-    ##1 Level
+    #consistency check for pairwise comparison matrix of the criteria
+    def consistency_check(self, arr_criteria, criteria_number):
+        '''
+        Performs the consistency check of the ongoing matrix operations
 
-    mech = TreeNode('Mechanical_Parameters')
-    root.add_child(mech)
-    proc = TreeNode('Process_Parameters')
-    root.add_child(proc)
-    ecol = TreeNode('Ecology_Parameters')
-    root.add_child(ecol)
-    econ = TreeNode('Economic_Parameters')
-    root.add_child(econ)
+        :param arr_criteria: matrix with pairwise compared values
+        :param criteria_number: size of the matrix
+        :param RI: random indices
+        :return: consistency result
+        '''
 
-    ##2 Level
+        lambdamax = np.amax(np.linalg.eigvals(arr_criteria).real)
+        CI =(lambdamax - criteria_number) / (criteria_number -1)
+        CR = CI/self.RI[criteria_number-1]
 
-    zero = TreeNode('0_degree')
-    mech.add_child(zero)
-    ninety = TreeNode('90_0_degree')
-    mech.add_child(ninety)
+        return CR
 
-    diam = TreeNode('Diameter')
-    proc.add_child(diam)
-    oval = TreeNode('Ovality')
-    proc.add_child(oval)
-    mfr = TreeNode('MFR')
-    proc.add_child(mfr)
+    #calculation of priority vector
+    def priority_vector(self, arr_criteria):
+        '''
+        Calculation of the priority vector
 
-    health = TreeNode('Human_Health')
-    ecol.add_child(health)
-    res = TreeNode('Resources')
-    ecol.add_child(res)
-    ecosys = TreeNode('Ecosystems')
-    ecol.add_child(ecosys)
+        :param arr_criteria: matrix with pairwise compared values
+        :return: priority vector
+        '''
+        # val,vec = sc.eigs(arr_criteria, k=1, which='LM')
+        val, vec = np.linalg.eig(arr_criteria)
+        eigcriteria = np.real(vec)
+        w = eigcriteria/np.sum(eigcriteria)
+        w = np.array(w).ravel()
 
-    econ_nom = TreeNode('Normalized_Cost_Data')
-    econ.add_child(econ_nom)
+        return w
 
-    ##3 Level
-    zero_strain = TreeNode('0_Tensile_Strain')
-    zero.add_child(zero_strain)
-    zero_stress = TreeNode('0_Tensile_Stress')
-    zero.add_child(zero_stress)
-    zero_mod = TreeNode('0_E_Modulus')
-    zero.add_child(zero_mod)
+    #normalization I
+    def normalize_max(self, arr,rownumber):
+        '''
+        normalization, if considering highest value as reference
 
-    ninety_strain = TreeNode('90_0_Tensile_Strain')
-    ninety.add_child(ninety_strain)
-    ninety_stress = TreeNode('90_0_Tensile_Stress')
-    ninety.add_child(ninety_stress)
-    ninety_mod = TreeNode('90_0_E_Modulus')
-    ninety.add_child(ninety_mod)
+        :param arr: array of normalizing values
+        :param rownumber: size of array to normalize
+        :return: normalized array
+        '''
+        return ((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min())
 
-    diam_norm = TreeNode('Normalized_Diameter_Data')
-    diam.add_child(diam_norm)
-    oval_norm = TreeNode('Normalized_Ovality_Data')
-    oval.add_child(oval_norm)
-    mfr_norm = TreeNode('Normalized_MFR_Data')
-    mfr.add_child(mfr_norm)
+    #normalization II
+    def normalize_min(self, arr,rownumber):
+        '''
+        normalization, if considering smallest value as reference
 
-    health_norm = TreeNode('Normalized_Human_Health_Data')
-    health.add_child(health_norm)
-    res_norm = TreeNode('Normalized_Resources_Data')
-    res.add_child(res_norm)
-    ecosys_norm = TreeNode('Normalized_Ecosystem_Data')
-    ecosys.add_child(ecosys_norm)
+        :param arr: array of normalizing values
+        :param rownumber: size of array to normalize
+        :return: normalized array
+        '''
+        return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
 
-    ##4 Level
+    def calculate_tree(self):
+        """
+            Function to calculate the tree from the bottom up.
+            If s is not fully calculated, then calulate recursively on children
+        """
+        if len(self.s) is not len(self.children):
+            for child in self.children:
+                child.calculate_tree()
+        else:
+            self.s = self._calculate_s(a, w)
+            self.parent.calculate_tree()
+        
 
-    zero_strain_norm = TreeNode('Normalized_0_Tensile_Strain_Data')
-    zero_strain.add_child(zero_strain_norm)
-    zero_stress_norm = TreeNode('Normalized_0_Tensile_Stress_Data')
-    zero_stress.add_child(zero_stress_norm)
-    zero_mod_norm = TreeNode('Normalized_0_Tensile_E_Modulus_Data')
-    zero_mod.add_child(zero_mod_norm)
-
-    ninety_strain_norm = TreeNode('Normalized_90_0_Tensile_Strain_Data')
-    ninety_strain.add_child(ninety_strain_norm)
-    ninety_stress_norm = TreeNode('Normalized_90_0_Tensile_Stress_Data')
-    ninety_stress.add_child(ninety_stress_norm)
-    ninety_mod_norm = TreeNode('Normalized_90_0_Tensile_E_Modulus_Data')
-    ninety_mod.add_child(ninety_mod_norm)
-
-    return root
-
-root = build_AHP_tree()
-root.print_tree()
-pass
+    def _calculate_s(self, a: np.ndarray, w : np.ndarray) -> np.ndarray:
+        return a @ w
