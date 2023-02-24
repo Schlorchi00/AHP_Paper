@@ -104,6 +104,20 @@ def build_AHP_tree():
 
     return root
 
+def build_base_tree():
+    """
+        Function to build a basic tree with 3 nodes, 1 root, 2 children - 3 alternatives
+        Option 2: 2 alternatives, 3 children
+        * Name the node
+        * insert as children
+        TODO:
+            * get one weight matrix
+                * from excel
+                * hand define
+            * set the flag for "Calculated" on the children
+                * insert fictionary s values for the alternatives
+    """
+
 if __name__=="__main__":
     args = parse_args()
     # args = default_args()
