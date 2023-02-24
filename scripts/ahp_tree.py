@@ -7,6 +7,11 @@ def parse_args():
     args = parser.parse_args()
     return vars(args)
 
+def default_args():
+    args = {}
+    args["input"] = "blablabla"
+    return args
+
 def build_AHP_tree():
     '''
     Creation of a hierarchical tree structure
@@ -101,5 +106,6 @@ def build_AHP_tree():
 
 if __name__=="__main__":
     args = parse_args()
+    # args = default_args()
     root = build_AHP_tree()
     root.print_tree()

@@ -23,6 +23,28 @@ import numpy as np
 #tree structure AHP
 class TreeNode:
 
+    """
+        ! Required - AHP matrix -- w -- is necessary for each Node. to be defined
+            * from an array
+            * from an excel file
+        ! TreeNode Data should be 
+        TODO:
+            * [ ] Calculate the tree
+                * [ ] calculate from bottom up
+                * [ ] if a node is calculated, it has a  -- s -- list
+                    * [ ] initialise s als None
+                    * [ ] if s is None - recursively calculate all children
+                        * [ ] all nodes need a flag whether they are calculated -- multiplied s with w
+                        * [ ] Alternatively - the parent may have a flag when all children are ready - define over list? 
+
+                * [ ] Calculate random 2, 3, 4 matries to fill in as weights for each node
+            * Try with simple easy structure 
+                * 1 top node, 2 children
+                    * per hand nachrechnen - maximal 3 alternatives
+                    * ausschliesslich natuerliche zahlen
+                    * ranges 0 - 1 in 0.1er schritten 
+    """
+
     RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
 
     def __init__(self, data):
