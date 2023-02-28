@@ -5,6 +5,8 @@
 ##import libraries
 
 import numpy as np
+from ahp.utils import read_excel
+import pandas as pd
 # import scipy.sparse.linalg as sc
 
 ########################################################################################################################
@@ -47,13 +49,15 @@ class TreeNode:
 
     RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
 
-    def __init__(self, data):
+    def __init__(self, name: str, weights : pd.DataFrame =  None, values : pd.Series = None):
         '''
         Initialization of the hierarchical tree structure
 
         :param data: any data representing the nodes
         '''
-        self.data = data
+        self.name = name
+        self.weights = weights
+        self.values = values
         self.children = []
         self.parent = None
 
@@ -161,9 +165,10 @@ class TreeNode:
         '''
         return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
 
-    def calculate_tree(self):
+    def calculate(self):
         """
             Function to calculate the tree from the bottom up.
+            Should be called from the root
             If s is not fully calculated, then calulate recursively on children
         """
         if len(self.s) is not len(self.children):
@@ -173,6 +178,50 @@ class TreeNode:
             self.s = self._calculate_s(a, w)
             self.parent.calculate_tree()
         
-
     def _calculate_s(self, a: np.ndarray, w : np.ndarray) -> np.ndarray:
         return a @ w
+
+    def is_leaf(self):
+        """
+            Simple check to see if a Node is a leaf
+        """
+        return False if self.children else True 
+
+
+    def check_integrity(self):
+        """
+            Function to check the integrity of a Tree. Should be able to be called from any Node (or Root).
+            Checks that:
+                1. All nodes that are NOT leaf nodes (e.g. have children) only have weight matrices defined
+                2. ALL nodes that are Leaf nodes (e.g. have no children) have values defined
+        """
+        raise NotImplementedError
+
+    
+    @classmethod
+    def from_weights(cls, fpath : str, name : str):
+        """
+            Function to get a TreeNode from a path to an Excel specifying weights.
+            Stores as a pandas DataFrame.
+            Should not be used for Leaf Nodes, only for higher levels.
+            Will perform integrity check (whether consistency ratio is met)
+        """
+        df = read_excel(fpath, series=False)
+        nd = cls(name = name, weights=df)
+
+        return nd
+
+
+    @classmethod
+    def from_values(cls, fpath : str, name : str):
+        """
+            Function to get a TreeNode from a path to an Excel specifying values.
+            Stores as a pandas Series.
+            Should only be used for Leaf Nodes!
+            Will perform integrity check (all **values** between 0 and 1)
+        """
+        ser = read_excel(fpath, series=True)
+
+        nd = cls(name = name, values=ser)
+
+        return nd

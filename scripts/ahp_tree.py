@@ -1,5 +1,6 @@
 from ahp.ahp_functions import TreeNode
 from argparse import ArgumentParser
+import os.path
 
 def parse_args():
     parser = ArgumentParser(description="File for running an ahp.")
@@ -117,9 +118,38 @@ def build_base_tree():
             * set the flag for "Calculated" on the children
                 * insert fictionary s values for the alternatives
     """
+    fdir = os.path.dirname(os.path.abspath(__file__))
+    simple_dir = os.path.join(fdir, '..', 'data', 'simple_tree')
+    node_A_f = os.path.join(simple_dir, 'A_weights.xlsx')
+    node_B_f = os.path.join(simple_dir, 'B_values.xlsx')
+    node_C_f = os.path.join(simple_dir, 'C_values.xlsx')
+
+    # What the functions should be called like
+    node_A = TreeNode.from_weights(node_A_f, name="Node A")
+    node_B = TreeNode.from_values(node_B_f, "Node B")
+    node_C = TreeNode.from_values(node_C_f, "Node C")
+
+    # Building the tree structure
+    node_A.add_child(node_B)
+    node_A.add_child(node_C)
+
+    print("Is node_A a leaf? {}".format(
+        node_A.is_leaf()
+    ))
+    print("Is node_B a leaf? {}".format(
+        node_B.is_leaf()
+    ))
+    print("Is node_C a leaf? {}".format(
+        node_C.is_leaf()
+    ))
+
+    # Calculating the tree
+    node_A.calculate()
+
 
 if __name__=="__main__":
-    args = parse_args()
+    build_base_tree()
+    # args = parse_args()
     # args = default_args()
-    root = build_AHP_tree()
-    root.print_tree()
+    # root = build_AHP_tree()
+    # root.print_tree()
