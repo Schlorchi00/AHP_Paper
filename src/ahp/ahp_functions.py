@@ -165,12 +165,36 @@ class TreeNode:
         '''
         return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
 
-    def calculate(self):
+    def prepare_tree(self):
+        """
+            Preparing the tree - by naming the "values" series according to the bottom most children.
+            TODO: calculate the eigenvectors of the weight matrix and check whether that is correct
+        """
+        if not self.is_root():
+            raise ValueError("Should be called on the root node")
+        self.__prepare_values()
+
+    def __prepare_values(self):
+        """
+            Guaranteed to be called on the root node.
+        """
+        for child in self.children:
+            if child.is_leaf():
+                
+                break
+            else:
+                child.__prepare_values()
+
+    def calculate_tree(self):
         """
             Function to calculate the tree from the bottom up.
             Should be called from the root
             If s is not fully calculated, then calulate recursively on children
         """
+        if not self.is_root():
+            raise ValueError("Should be called on the root node.")
+        return
+        # TODO: check what these things do
         if len(self.s) is not len(self.children):
             for child in self.children:
                 child.calculate_tree()
@@ -185,7 +209,16 @@ class TreeNode:
         """
             Simple check to see if a Node is a leaf
         """
-        return False if self.children else True 
+        return False if self.children else True
+
+    def is_root(self):
+        return False if self.parent else True
+
+    def is_ready(self):
+        """
+            function to tell if the node is ready for calculation.
+            E.G. if "values" is filled
+        """
 
 
     def check_integrity(self):

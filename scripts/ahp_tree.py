@@ -144,7 +144,8 @@ def build_base_tree():
     ))
 
     # Calculating the tree
-    node_A.calculate()
+    node_A.prepare_tree()
+    node_A.calculate_tree()
 
 
 if __name__=="__main__":
