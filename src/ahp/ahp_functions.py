@@ -60,6 +60,7 @@ class TreeNode:
         self.values = values
         self.children = []
         self.parent = None
+        self.lam = None         # Placeholder for the eigenvector
 
     def add_child(self, child):
         '''
@@ -111,7 +112,7 @@ class TreeNode:
         raise NotImplementedError
 
     #consistency check for pairwise comparison matrix of the criteria
-    def consistency_check(self, arr_criteria, criteria_number):
+    def consistency_check(self):
         '''
         Performs the consistency check of the ongoing matrix operations
 
@@ -120,15 +121,27 @@ class TreeNode:
         :param RI: random indices
         :return: consistency result
         '''
-
+        if self.is_leaf():
+            raise ValueError("Cannot perform consistency check on leaf nodes")
+        criteria_number = self.weights.shape[0]     # square matrix - guaranteed to be same for 0 and 1
+        arr_criteria = self.weights
         lambdamax = np.amax(np.linalg.eigvals(arr_criteria).real)
         CI =(lambdamax - criteria_number) / (criteria_number -1)
         CR = CI/self.RI[criteria_number-1]
 
         return CR
 
+    def is_consistent(self):
+        """
+            Function to check whether the matrix is consistent according to the comparison matrix
+            TODO - when is this done?
+        """
+        raise NotImplementedError("Not clear when the matrix is deemed consistent. CR has to be what??? Smaller than 1.0?")
+        cr = self.consistency_check()
+        # if cr > 1.0???? what is the number that should be here
+
     #calculation of priority vector
-    def priority_vector(self, arr_criteria):
+    def priority_vector(self):
         '''
         Calculation of the priority vector
 
@@ -136,6 +149,7 @@ class TreeNode:
         :return: priority vector
         '''
         # val,vec = sc.eigs(arr_criteria, k=1, which='LM')
+        arr_criteria = self.weights
         val, vec = np.linalg.eig(arr_criteria)
         eigcriteria = np.real(vec)
         w = eigcriteria/np.sum(eigcriteria)
@@ -174,16 +188,44 @@ class TreeNode:
             raise ValueError("Should be called on the root node")
         self.__prepare_values()
 
+    def __set_lambda(self):
+        """
+            Function to set the lambda vector.
+        """
+        if self.lam is None:
+            lamb = self.priority_vector()
+            self.lam = lamb
+
+
+    def __set_values(self, vals : pd.Series):
+        """
+            Function to set the value vector to 0
+        """
+        # set the value vector
+        if self.values is None:
+            self.values = vals
+            # 0 the values
+            self.values[:] = 0
+        # else:
+        #     raise ValueError("Values already set")
+
     def __prepare_values(self):
         """
-            Guaranteed to be called on the root node.
+            Guaranteed to be called first on the root node.
         """
-        for child in self.children:
-            if child.is_leaf():
-                
-                break
-            else:
+        if self.is_leaf():
+            if self.parent.values is None:
+                self.parent.__set_values(self.values)
+        else:
+            self.__set_lambda()
+            for child in self.children:
                 child.__prepare_values()
+
+    def __values_set(self):
+        """
+            Check whether the values are actually set up correctly - and not just np.nan, as set in __set_values()
+        """
+        return False if not self.values.all() else True
 
     def calculate_tree(self):
         """
@@ -219,6 +261,7 @@ class TreeNode:
             function to tell if the node is ready for calculation.
             E.G. if "values" is filled
         """
+        pass
 
 
     def check_integrity(self):
