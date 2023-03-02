@@ -96,6 +96,21 @@ class TreeNode:
             for child in self.children:
                 child.print_tree()
 
+    def __repr__(self) -> str:
+        if self.is_root():
+            returnstr = "Name {}\nRoot Node\nWeights:\n{}".format(
+                self.name, self.weights
+            )
+        elif self.is_leaf():
+            returnstr = "Name {}\nLeaf node\nValues:\n{}".format(
+                self.name, self.values
+            )
+        else:
+            returnstr = "Name {}\nWeights:\n{}".format(
+                self.name, self.weights
+            )
+        return returnstr
+
     def __len__(self):
         """
             Placeholder for actual length here
@@ -151,11 +166,7 @@ class TreeNode:
         # val,vec = sc.eigs(arr_criteria, k=1, which='LM')
         arr_criteria = self.weights
         val, vec = np.linalg.eig(arr_criteria)
-        eigcriteria = np.real(vec)
-        w = eigcriteria/np.sum(eigcriteria)
-        w = np.array(w).ravel()
-
-        return w
+        return vec[:, np.argmax(val)]
 
     #normalization I
     def normalize_max(self, arr,rownumber):
@@ -203,9 +214,12 @@ class TreeNode:
         """
         # set the value vector
         if self.values is None:
-            self.values = vals
+            self.values = vals.copy()
             # 0 the values
             self.values[:] = 0
+
+            # set an intermediate df for the calculation
+            self._inter_df = pd.DataFrame(0., columns =[child.name for child in self.children], index = vals.index.to_list())
         # else:
         #     raise ValueError("Values already set")
 
@@ -213,10 +227,9 @@ class TreeNode:
         """
             Guaranteed to be called first on the root node.
         """
-        if self.is_leaf():
-            if self.parent.values is None:
-                self.parent.__set_values(self.values)
-        else:
+        if self.parent and self.parent.values is None:
+            self.parent.__set_values(self.values)
+        elif self.children:
             self.__set_lambda()
             for child in self.children:
                 child.__prepare_values()
@@ -244,8 +257,18 @@ class TreeNode:
             self.s = self._calculate_s(a, w)
             self.parent.calculate_tree()
         
-    def _calculate_s(self, a: np.ndarray, w : np.ndarray) -> np.ndarray:
-        return a @ w
+    def _calculate_s(self):
+        """
+            Function to actually calculate the value dataframe.
+            TODO : ensure correct column naming
+        """
+        self.values = self._inter_df @ self.lam
+    
+    def is_calculated(self):
+        """
+            returns true if self.values is more than just zeros
+        """
+        return self.values.all()
 
     def is_leaf(self):
         """
