@@ -146,7 +146,7 @@ def build_base_tree():
     # Calculating the tree
     node_A.prepare_tree()
     #! ensure to always work with values.copy() when using across multiple nodes - otherwise is only a reference!
-    node_A.calculate_tree()
+    node_B.calculate_tree()
 
 
 if __name__=="__main__":

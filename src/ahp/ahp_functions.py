@@ -243,11 +243,16 @@ class TreeNode:
     def calculate_tree(self):
         """
             Function to calculate the tree from the bottom up.
-            Should be called from the root
-            If s is not fully calculated, then calulate recursively on children
+            Should be called from a leaf
+            If is not fully calculated, then calulate recursively on children
         """
-        if not self.is_root():
-            raise ValueError("Should be called on the root node.")
+        if not self.is_calculated():
+            #! ensure that the tree is traversed from bottom up here - descend back down
+            raise ValueError("Should be called on a leaf node.")
+        if not self.parent.is_calculated():
+            self.parent.fill_values()
+        self.parent._calculate_s()
+        self.parent.calculate_tree()
         return
         # TODO: check what these things do
         if len(self.s) is not len(self.children):
@@ -256,7 +261,14 @@ class TreeNode:
         else:
             self.s = self._calculate_s(a, w)
             self.parent.calculate_tree()
-        
+    
+    def fill_values(self):
+        """
+            Inserting the values of the intermediate dataframe
+        """
+        for child in self.children:
+            self._inter_df[:,child.name] = child.values.copy()
+
     def _calculate_s(self):
         """
             Function to actually calculate the value dataframe.
@@ -266,9 +278,10 @@ class TreeNode:
     
     def is_calculated(self):
         """
-            returns true if self.values is more than just zeros
+            TODO: returns true if NONE of the sum of all columns is 0
+            ! check if ALL values are zeros - np.allclose(0)
         """
-        return self.values.all()
+        return self.values.allclose()
 
     def is_leaf(self):
         """
