@@ -229,7 +229,7 @@ class TreeNode:
         """
         if self.parent and self.parent.values is None:
             self.parent.__set_values(self.values)
-        elif self.children:
+        if self.children:
             self.__set_lambda()
             for child in self.children:
                 child.__prepare_values()
@@ -246,21 +246,26 @@ class TreeNode:
             Should be called from a leaf
             If is not fully calculated, then calulate recursively on children
         """
+        # All leaf nodes are calculated by default - otherwise there should be an error before
         if not self.is_calculated():
+            for child in self.children:
+                child.calulate_tree()
             #! ensure that the tree is traversed from bottom up here - descend back down
             raise ValueError("Should be called on a leaf node.")
-        if not self.parent.is_calculated():
-            self.parent.fill_values()
-        self.parent._calculate_s()
-        self.parent.calculate_tree()
-        return
-        # TODO: check what these things do
-        if len(self.s) is not len(self.children):
-            for child in self.children:
-                child.calculate_tree()
         else:
-            self.s = self._calculate_s(a, w)
-            self.parent.calculate_tree()
+            self.parent.inter_df[:,self.name] = self.values.copy()
+        # if not self.parent.is_calculated():
+        #     self.parent.calculate_tree()
+        # self.parent._calculate_s()
+        # self.parent.calculate_tree()
+        # return
+        # # TODO: check what these things do
+        # if len(self.s) is not len(self.children):
+        #     for child in self.children:
+        #         child.calculate_tree()
+        # else:
+        #     self.s = self._calculate_s(a, w)
+        #     self.parent.calculate_tree()
     
     def fill_values(self):
         """
@@ -276,12 +281,11 @@ class TreeNode:
         """
         self.values = self._inter_df @ self.lam
     
-    def is_calculated(self):
+    def _is_calculated(self):
         """
-            TODO: returns true if NONE of the sum of all columns is 0
-            ! check if ALL values are zeros - np.allclose(0)
+            Returns true if all column sums are not 0
         """
-        return self.values.allclose()
+        return self.values.sum(0).all()
 
     def is_leaf(self):
         """
