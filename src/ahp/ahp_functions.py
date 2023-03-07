@@ -245,6 +245,12 @@ class TreeNode:
             Function to calculate the tree from the bottom up.
             Should be called from a leaf
             If is not fully calculated, then calulate recursively on children
+            TODO: post-order tree traversal, see here: https://stackoverflow.com/questions/20062527/scan-tree-structure-from-bottom-up
+            ! Should be depth-first post-order traversal
+            function post_order(Tree node)
+                foreach n in node.children
+                    post_order(n)
+                print(node.text)
         """
         # All leaf nodes are calculated by default - otherwise there should be an error before
         if not self._is_calculated():
