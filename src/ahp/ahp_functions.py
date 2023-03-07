@@ -247,25 +247,13 @@ class TreeNode:
             If is not fully calculated, then calulate recursively on children
         """
         # All leaf nodes are calculated by default - otherwise there should be an error before
-        if not self.is_calculated():
+        if not self._is_calculated():
             for child in self.children:
-                child.calulate_tree()
+                child.calculate_tree()
             #! ensure that the tree is traversed from bottom up here - descend back down
-            raise ValueError("Should be called on a leaf node.")
         else:
-            self.parent.inter_df[:,self.name] = self.values.copy()
-        # if not self.parent.is_calculated():
-        #     self.parent.calculate_tree()
-        # self.parent._calculate_s()
-        # self.parent.calculate_tree()
-        # return
-        # # TODO: check what these things do
-        # if len(self.s) is not len(self.children):
-        #     for child in self.children:
-        #         child.calculate_tree()
-        # else:
-        #     self.s = self._calculate_s(a, w)
-        #     self.parent.calculate_tree()
+            self.parent._inter_df.loc[:,self.name] = self.values.copy()
+            self.parent.calculate_tree()
     
     def fill_values(self):
         """
