@@ -61,6 +61,7 @@ class TreeNode:
         self.children = []
         self.parent = None
         self.lam = None         # Placeholder for the eigenvector
+        self._inter_df = None   # Placeholder for intermediate calculations - debugging
 
     def add_child(self, child):
         '''
@@ -207,7 +208,6 @@ class TreeNode:
             lamb = self.priority_vector()
             self.lam = lamb
 
-
     def __set_values(self, vals : pd.Series):
         """
             Function to set the value vector to 0
@@ -226,13 +226,22 @@ class TreeNode:
     def __prepare_values(self):
         """
             Guaranteed to be called first on the root node.
+            sets intermediate dataframes in parent nodes
+            sets the lambda vector in parent nodes
+            TODO: setting lambda should be part of the initialization - so that integrity is checked first
+            sets the intermediate dataframe values
         """
-        if self.parent and self.parent.values is None:
+        for child in self.children:
+            child.__prepare_values()
+        if not self.is_root() and not self.parent.is_prepared():
+            # set the values vector on the parent
             self.parent.__set_values(self.values)
-        if self.children:
-            self.__set_lambda()
-            for child in self.children:
-                child.__prepare_values()
+            # calculate lambda on the parent
+            self.parent.__set_lambda()
+        # set the _inter_df 
+        if not self.is_leaf():
+            self.fill_values()
+        
 
     def __values_set(self):
         """
@@ -243,15 +252,17 @@ class TreeNode:
     def calculate_tree(self):
         """
             Function to calculate the tree from the bottom up.
-            Should be called from a leaf
+            Should be called from root
             If is not fully calculated, then calulate recursively on children
-            TODO: post-order tree traversal, see here: https://stackoverflow.com/questions/20062527/scan-tree-structure-from-bottom-up
-            ! Should be depth-first post-order traversal
-            function post_order(Tree node)
-                foreach n in node.children
-                    post_order(n)
-                print(node.text)
+            post-order tree traversal, see here: https://stackoverflow.com/questions/20062527/scan-tree-structure-from-bottom-up
         """
+        for child in self.children:
+            child.calculate_tree()
+        if not self.is_leaf():
+            self.fill_values()
+        
+        if not self.parent._inter_df:
+            self.parent.__set
         # All leaf nodes are calculated by default - otherwise there should be an error before
         if not self._is_calculated():
             for child in self.children:
@@ -266,7 +277,7 @@ class TreeNode:
             Inserting the values of the intermediate dataframe
         """
         for child in self.children:
-            self._inter_df[:,child.name] = child.values.copy()
+            self._inter_df.loc[:,child.name] = child.values.copy()
 
     def _calculate_s(self):
         """
@@ -288,14 +299,17 @@ class TreeNode:
         return False if self.children else True
 
     def is_root(self):
+        """
+            Simple check to see if a Node is the root node
+        """
         return False if self.parent else True
 
-    def is_ready(self):
+    def is_prepared(self):
         """
             function to tell if the node is ready for calculation.
-            E.G. if "values" is filled
+            E.G. if "values" is filled or if it is a leaf
         """
-        pass
+        return True if self._inter_df is not None or self.is_leaf() else False
 
 
     def check_integrity(self):
