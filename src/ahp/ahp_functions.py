@@ -191,6 +191,16 @@ class TreeNode:
         '''
         return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
 
+    # Getting the values
+    def get_values(self):
+        """
+            Function to get the values
+        """
+        return self.values
+
+    ###############################
+    # Section on preparing the tree
+    ###############################
     def prepare_tree(self):
         """
             Preparing the tree - by naming the "values" series according to the bottom most children.
@@ -200,28 +210,6 @@ class TreeNode:
             raise ValueError("Should be called on the root node")
         self.__prepare_values()
 
-    def __set_lambda(self):
-        """
-            Function to set the lambda vector.
-        """
-        if self.lam is None:
-            lamb = self.priority_vector()
-            self.lam = lamb
-
-    def __set_values(self, vals : pd.Series):
-        """
-            Function to set the value vector to 0
-        """
-        # set the value vector
-        if self.values is None:
-            self.values = vals.copy()
-            # 0 the values
-            self.values[:] = 0
-
-            # set an intermediate df for the calculation
-            self._inter_df = pd.DataFrame(0., columns =[child.name for child in self.children], index = vals.index.to_list())
-        # else:
-        #     raise ValueError("Values already set")
 
     def __prepare_values(self):
         """
@@ -241,37 +229,28 @@ class TreeNode:
         # set the _inter_df 
         if not self.is_leaf():
             self.fill_values()
-        
-
-    def __values_set(self):
-        """
-            Check whether the values are actually set up correctly - and not just np.nan, as set in __set_values()
-        """
-        return False if not self.values.all() else True
-
-    def calculate_tree(self):
-        """
-            Function to calculate the tree from the bottom up.
-            Should be called from root
-            If is not fully calculated, then calulate recursively on children
-            post-order tree traversal, see here: https://stackoverflow.com/questions/20062527/scan-tree-structure-from-bottom-up
-        """
-        for child in self.children:
-            child.calculate_tree()
-        if not self.is_leaf():
-            self.fill_values()
-        
-        if not self.parent._inter_df:
-            self.parent.__set
-        # All leaf nodes are calculated by default - otherwise there should be an error before
-        if not self._is_calculated():
-            for child in self.children:
-                child.calculate_tree()
-            #! ensure that the tree is traversed from bottom up here - descend back down
-        else:
-            self.parent._inter_df.loc[:,self.name] = self.values.copy()
-            self.parent.calculate_tree()
     
+    def __set_lambda(self):
+        """
+            Function to set the lambda vector.
+        """
+        if self.lam is None:
+            lamb = self.priority_vector()
+        self.lam = lamb
+
+    def __set_values(self, vals : pd.Series):
+        """
+            Function to set the value vector to 0
+        """
+        # set the value vector
+        if self.values is None:
+            self.values = vals.copy()
+            # 0 the values
+            self.values[:] = 0
+
+            # set an intermediate df for the calculation
+            self._inter_df = pd.DataFrame(0., columns =[child.name for child in self.children], index = vals.index.to_list())
+
     def fill_values(self):
         """
             Inserting the values of the intermediate dataframe
@@ -279,19 +258,46 @@ class TreeNode:
         for child in self.children:
             self._inter_df.loc[:,child.name] = child.values.copy()
 
-    def _calculate_s(self):
+    #################################
+    # Section on calculating the tree
+    #################################
+    def calculate_tree(self):
+        """
+            Outer function to call __calculate_tree() on root 
+        """
+        if not self.is_root():
+            raise ValueError("Has to be called on root.")
+        self.__calculate_tree()
+
+    def __calculate_tree(self):
+        """
+            Function to calculate the tree from the bottom up.
+            Called on root
+            post-order tree traversal, see here: https://stackoverflow.com/questions/20062527/scan-tree-structure-from-bottom-up
+        """
+        
+        for child in self.children:
+            child.__calculate_tree()
+        if not self.is_leaf():
+            self._calculate_values()
+        
+
+    def _calculate_values(self):
         """
             Function to actually calculate the value dataframe.
-            TODO : ensure correct column naming
         """
         self.values = self._inter_df @ self.lam
     
+    ########################
+    # State checking functions
+    #########################
     def _is_calculated(self):
         """
             Returns true if all column sums are not 0
         """
         return self.values.sum(0).all()
 
+    
     def is_leaf(self):
         """
             Simple check to see if a Node is a leaf
@@ -310,6 +316,12 @@ class TreeNode:
             E.G. if "values" is filled or if it is a leaf
         """
         return True if self._inter_df is not None or self.is_leaf() else False
+    
+    def __values_set(self):
+        """
+            Check whether the values are actually set up correctly - and not just np.nan, as set in __set_values()
+        """
+        return False if not self.values.all() else True
 
 
     def check_integrity(self):
@@ -321,7 +333,9 @@ class TreeNode:
         """
         raise NotImplementedError
 
-    
+    ####################
+    # Outer Init Methods
+    ####################
     @classmethod
     def from_weights(cls, fpath : str, name : str):
         """
