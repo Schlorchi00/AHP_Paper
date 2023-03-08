@@ -333,6 +333,18 @@ class TreeNode:
         """
         raise NotImplementedError
 
+    # functional bottom up traversal
+    def functional_post_order(self, f : function):
+        for child in self.children:
+            self.functional_post_order(child, f)
+        f(self)
+
+    def functional_pre_order(self, f : function):
+        f(self)
+        for child in self.children:
+            self.functional_pre_order(child, f)
+
+
     ####################
     # Outer Init Methods
     ####################
