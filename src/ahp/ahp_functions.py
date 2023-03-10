@@ -48,6 +48,7 @@ class TreeNode:
     """
 
     RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
+    CONSISTENCY_THRESHOLD = 0.1
 
     def __init__(self, name: str, weights : pd.DataFrame =  None, values : pd.Series = None):
         '''
@@ -128,30 +129,30 @@ class TreeNode:
         raise NotImplementedError
 
     #consistency check for pairwise comparison matrix of the criteria
-    def consistency_check(self):
+    def is_consistent(self):
         '''
         Performs the consistency check of the ongoing matrix operations
 
         :param arr_criteria: matrix with pairwise compared values
         :param criteria_number: size of the matrix
         :param RI: random indices
-        :return: consistency result
+        :return: Boolean - is consistent
         '''
-        if self.is_leaf():
-            raise ValueError("Cannot perform consistency check on leaf nodes")
-        criteria_number = self.weights.shape[0]     # square matrix - guaranteed to be same for 0 and 1
+        criteria_number = self.get_dimensions()    # square matrix - guaranteed to be same for 0 and 1
         arr_criteria = self.weights
-        lambdamax = np.amax(np.linalg.eigvals(arr_criteria).real)
+        val, _ = np.linalg.eig(arr_criteria)
+        lambdamax = np.argmax(val)
+        # lambdamax = np.amax(np.linalg.eigvals(arr_criteria).real)
         CI =(lambdamax - criteria_number) / (criteria_number -1)
-        CR = CI/self.RI[criteria_number-1]
+        CR = CI/self.RI[criteria_number]
+        return True if CR <= self.CONSISTENCY_THRESHOLD else False
 
-        return CR
+    def get_dimensions(self):
+        """
+            Function to get square matrix dimension
+        """
+        return self.weights.shape[0]
 
-    def is_consistent(self):
-        """
-            Function to check whether the matrix is consistent according to the comparison matrix
-            TODO - when is this done?
-        """
         raise NotImplementedError("Not clear when the matrix is deemed consistent. CR has to be what??? Smaller than 1.0?")
         cr = self.consistency_check()
         # if cr > 1.0???? what is the number that should be here
@@ -204,7 +205,6 @@ class TreeNode:
     def prepare_tree(self):
         """
             Preparing the tree - by naming the "values" series according to the bottom most children.
-            TODO: calculate the eigenvectors of the weight matrix and check whether that is correct
         """
         if not self.is_root():
             raise ValueError("Should be called on the root node")
@@ -216,7 +216,6 @@ class TreeNode:
             Guaranteed to be called first on the root node.
             sets intermediate dataframes in parent nodes
             sets the lambda vector in parent nodes
-            TODO: setting lambda should be part of the initialization - so that integrity is checked first
             sets the intermediate dataframe values
         """
         for child in self.children:
@@ -225,7 +224,7 @@ class TreeNode:
             # set the values vector on the parent
             self.parent.__set_values(self.values)
             # calculate lambda on the parent
-            self.parent.__set_lambda()
+            # self.parent.__set_lambda()
         # set the _inter_df 
         if not self.is_leaf():
             self.fill_values()
@@ -334,15 +333,15 @@ class TreeNode:
         raise NotImplementedError
 
     # functional bottom up traversal
-    def functional_post_order(self, f : function):
-        for child in self.children:
-            self.functional_post_order(child, f)
-        f(self)
+    # def functional_post_order(self, f : function):
+    #     for child in self.children:
+    #         self.functional_post_order(child, f)
+    #     f(self)
 
-    def functional_pre_order(self, f : function):
-        f(self)
-        for child in self.children:
-            self.functional_pre_order(child, f)
+    # def functional_pre_order(self, f : function):
+    #     f(self)
+    #     for child in self.children:
+    #         self.functional_pre_order(child, f)
 
 
     ####################
@@ -358,7 +357,9 @@ class TreeNode:
         """
         df = read_excel(fpath, series=False)
         nd = cls(name = name, weights=df)
-
+        if not nd.is_consistent():
+            raise ValueError("Node is not consistent. Please choose other values")
+        nd.__set_lambda()
         return nd
 
 
