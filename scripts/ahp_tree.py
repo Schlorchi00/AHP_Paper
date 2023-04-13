@@ -149,6 +149,8 @@ def build_base_tree():
     node_A.calculate_tree()
     print(node_A.get_values())
 
+    node_A.print_tree()
+
 
 if __name__=="__main__":
     build_base_tree()
