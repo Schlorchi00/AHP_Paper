@@ -133,6 +133,7 @@ def build_base_tree():
     node_A.add_child(node_B)
     node_A.add_child(node_C)
 
+
     print("Is node_A a leaf? {}".format(
         node_A.is_leaf()
     ))
@@ -149,11 +150,179 @@ def build_base_tree():
     node_A.calculate_tree()
     print(node_A.get_values())
 
-    node_A.print_tree()
+    TreeNode.print_tree(node_A)
+
+def build_base_tree_1():
+
+    fdir = os.path.dirname(os.path.abspath(__file__))
+    simple_dir = os.path.join(fdir, '..', 'data', 'complete_tree')
+
+    ##Level 0
+    node_A_f = os.path.join(simple_dir, 'A_weights.xlsx')
+
+    ##Level 1
+    node_A1_f = os.path.join(simple_dir, 'A1_weights.xlsx')
+    node_A2_f = os.path.join(simple_dir, 'A2_weights.xlsx')
+    node_A3_f = os.path.join(simple_dir, 'A3_weights.xlsx')
+    node_A4_f = os.path.join(simple_dir, 'A4_weights.xlsx')
+
+    node_A41_f = os.path.join(simple_dir, 'A41_values.xlsx')
+
+    ##Level 2
+    node_A11_f = os.path.join(simple_dir, 'A11_weights.xlsx')
+    node_A12_f = os.path.join(simple_dir, 'A12_weights.xlsx')
+
+    node_A21_f = os.path.join(simple_dir, 'A21_weights.xlsx')
+    node_A22_f = os.path.join(simple_dir, 'A22_weights.xlsx')
+    node_A23_f = os.path.join(simple_dir, 'A23_weights.xlsx')
+
+    node_A211_f = os.path.join(simple_dir, 'A211_values.xlsx')
+    node_A221_f = os.path.join(simple_dir, 'A221_values.xlsx')
+    node_A231_f = os.path.join(simple_dir, 'A231_values.xlsx')
+
+    node_A31_f = os.path.join(simple_dir, 'A31_weights.xlsx')
+    node_A32_f = os.path.join(simple_dir, 'A32_weights.xlsx')
+    node_A33_f = os.path.join(simple_dir, 'A33_weights.xlsx')
+
+    node_A311_f = os.path.join(simple_dir, 'A311_values.xlsx')
+    node_A321_f = os.path.join(simple_dir, 'A321_values.xlsx')
+    node_A331_f = os.path.join(simple_dir, 'A331_values.xlsx')
+
+    ##Level3
+    node_A111_f = os.path.join(simple_dir, 'A111_weights.xlsx')
+    node_A112_f = os.path.join(simple_dir, 'A112_weights.xlsx')
+    node_A113_f = os.path.join(simple_dir, 'A113_weights.xlsx')
+
+    node_A121_f = os.path.join(simple_dir, 'A121_weights.xlsx')
+    node_A122_f = os.path.join(simple_dir, 'A122_weights.xlsx')
+    node_A123_f = os.path.join(simple_dir, 'A123_weights.xlsx')
+
+    node_A1111_f = os.path.join(simple_dir, 'A1111_values.xlsx')
+    node_A1121_f = os.path.join(simple_dir, 'A1121_values.xlsx')
+    node_A1131_f = os.path.join(simple_dir, 'A1131_values.xlsx')
+
+    node_A1211_f = os.path.join(simple_dir, 'A1211_values.xlsx')
+    node_A1221_f = os.path.join(simple_dir, 'A1221_values.xlsx')
+    node_A1231_f = os.path.join(simple_dir, 'A1231_values.xlsx')
+
+
+    #What the function should be called like
+
+    ##Level 0
+    node_A = TreeNode.from_weights(node_A_f, name='Meaningfulness_of_Recycling')
+
+    ##Level 1
+    node_A1 = TreeNode.from_weights(node_A1_f, 'Mechanical_Parameters')
+    node_A2 = TreeNode.from_weights(node_A2_f, 'Processinfluencing_Parameters')
+    node_A3 = TreeNode.from_weights(node_A3_f, 'Ecological_Parameters')
+    node_A4 = TreeNode.from_weights(node_A4_f, 'Economical_Parameters')
+
+    node_A41 = TreeNode.from_values(node_A41_f, 'Economical_Values')
+
+    ##Level 2
+    node_A11 = TreeNode.from_weights(node_A11_f, '0_degree')
+    node_A12 = TreeNode.from_weights(node_A12_f, '90_0_degree')
+
+    node_A21 = TreeNode.from_weights(node_A21_f, 'Diameter')
+    node_A22 = TreeNode.from_weights(node_A22_f, 'Ovality')
+    node_A23 = TreeNode.from_weights(node_A23_f, 'MFR')
+
+    node_A211 = TreeNode.from_values(node_A211_f, 'Diameter_values')
+    node_A221 = TreeNode.from_values(node_A221_f, 'Ovality_values')
+    node_A231 = TreeNode.from_values(node_A231_f , 'MFR_values')
+
+    node_A31 = TreeNode.from_weights(node_A31_f, 'Human_Health')
+    node_A32 = TreeNode.from_weights(node_A32_f, 'Resources')
+    node_A33 = TreeNode.from_weights(node_A33_f, 'Ecosystems')
+
+    node_A311 = TreeNode.from_values(node_A311_f, 'Human_Health_values')
+    node_A321 = TreeNode.from_values(node_A321_f, 'Resources_values')
+    node_A331 = TreeNode.from_values(node_A331_f, 'Ecosystems_values')
+
+    ##Level 3
+    node_A111 = TreeNode.from_weights(node_A111_f, 'Tensile_stress_0')
+    node_A112 = TreeNode.from_weights(node_A112_f, 'Tensile_strength_0')
+    node_A113 = TreeNode.from_weights(node_A113_f, 'E_Modulus_0')
+
+    node_A121 = TreeNode.from_weights(node_A121_f, 'Tensile_stress_90')
+    node_A122 = TreeNode.from_weights(node_A122_f, 'Tensile_strength_90')
+    node_A123 = TreeNode.from_weights(node_A123_f, 'E_Modulus_90')
+
+    node_A1111 = TreeNode.from_values(node_A1111_f, 'Tensile_stress_0_values')
+    node_A1121 = TreeNode.from_values(node_A1121_f, 'Tensile_strength_0_values')
+    node_A1131 = TreeNode.from_values(node_A1131_f, 'E_Modulus_0_values')
+
+    node_A1211 = TreeNode.from_values(node_A1211_f, 'Tensile_stress_90_values')
+    node_A1221 = TreeNode.from_values(node_A1221_f, 'Tensile_stress_90_values')
+    node_A1231 = TreeNode.from_values(node_A1231_f, 'E_Modulus_90_values')
+    
+
+
+    # Building the tree structure
+
+    ##Level 1
+    node_A.add_child(node_A1)
+    node_A.add_child(node_A2)
+    node_A.add_child(node_A3)
+    node_A.add_child(node_A4)
+
+    node_A4.add_child(node_A41)
+
+    ##Level 2
+    node_A1.add_child(node_A11)
+    node_A1.add_child(node_A12)
+
+    node_A2.add_child(node_A21)
+    node_A2.add_child(node_A22)
+    node_A2.add_child(node_A23)
+
+    node_A21.add_child(node_A211)
+    node_A22.add_child(node_A221)
+    node_A23.add_child(node_A231)
+
+    node_A3.add_child(node_A31)
+    node_A3.add_child(node_A32)
+    node_A3.add_child(node_A33)
+
+    node_A31.add_child(node_A311)
+    node_A32.add_child(node_A321)
+    node_A33.add_child(node_A331)
+
+    ##Level 3
+    node_A11.add_child(node_A111)
+    node_A11.add_child(node_A112)
+    node_A11.add_child(node_A113)
+
+    node_A12.add_child(node_A121)
+    node_A12.add_child(node_A122)
+    node_A12.add_child(node_A123)
+
+    node_A111.add_child(node_A1111)
+    node_A112.add_child(node_A1121)
+    node_A113.add_child(node_A1131)
+
+    node_A121.add_child(node_A1211)
+    node_A122.add_child(node_A1221)
+    node_A123.add_child(node_A1231)
+
+    #Examplary leaf testing
+    print("Is node_A a leaf? {}".format(
+        node_A.is_leaf()
+    ))
+    print("Is node_A1211 a leaf? {}".format(
+        node_A1211.is_leaf()
+    ))
+    print("Is node_A111 a leaf? {}".format(
+        node_A111.is_leaf()
+    ))
+
+
+    #Tree Visualization
+    TreeNode.print_tree(node_A)
 
 
 if __name__=="__main__":
-    build_base_tree()
+    build_base_tree_1()
     # args = parse_args()
     # args = default_args()
     # root = build_AHP_tree()

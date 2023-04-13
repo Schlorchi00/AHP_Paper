@@ -39,7 +39,7 @@ class TreeNode:
                         * [ ] all nodes need a flag whether they are calculated -- multiplied s with w
                         * [ ] Alternatively - the parent may have a flag when all children are ready - define over list? 
 
-                * [ ] Calculate random 2, 3, 4 matries to fill in as weights for each node
+                * [ ] Calculate random 2, 3, 4 matrices to fill in as weights for each node
             * Try with simple easy structure 
                 * 1 top node, 2 children
                     * per hand nachrechnen - maximal 3 alternatives
@@ -93,7 +93,7 @@ class TreeNode:
         '''
         spaces = ' ' * self.get_level() * 3
         prefix = spaces + '|__' if self.parent else ''
-        print(prefix + self.data)
+        print(prefix + self.name)
         if self.children:
             for child in self.children:
                 child.print_tree()
