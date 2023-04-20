@@ -10,3 +10,14 @@ def read_excel(fpath : str, series : bool = False) -> list:
         # df_list = [df.parse(sheet) for sheet in df.sheet_names]
     # return df_list
     return df
+
+
+##################
+# TODO: Utility functions for preprocessing below
+##############
+
+def read_from_xlsx():
+    raise NotImplementedError("There is another function here called read_excel. maybe use this one")
+
+def write_to_xlsx():
+    raise NotImplementedError("Not implemented yet")
