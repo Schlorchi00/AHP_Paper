@@ -228,7 +228,7 @@ class TreeNode:
         # set the _inter_df 
         if not self.is_leaf():
             self.fill_values()
-    
+
     def __set_lambda(self):
         """
             Function to set the lambda vector.
@@ -249,13 +249,15 @@ class TreeNode:
 
             # set an intermediate df for the calculation
             self._inter_df = pd.DataFrame(0., columns =[child.name for child in self.children], index = vals.index.to_list())
-
+            print(self._inter_df)#TODO: Delete
     def fill_values(self):
         """
             Inserting the values of the intermediate dataframe
         """
         for child in self.children:
+            print(self._inter_df.loc[:,child.name])
             self._inter_df.loc[:,child.name] = child.values.copy()
+
 
     #################################
     # Section on calculating the tree
@@ -279,14 +281,13 @@ class TreeNode:
             child.__calculate_tree()
         if not self.is_leaf():
             self._calculate_values()
-        
 
     def _calculate_values(self):
         """
             Function to actually calculate the value dataframe.
         """
-        self.values = self._inter_df @ self.lam
-    
+        self.values = self._inter_df.transpose() @ self.lam
+
     ########################
     # State checking functions
     #########################
