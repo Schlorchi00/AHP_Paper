@@ -286,7 +286,7 @@ class TreeNode:
         """
             Function to actually calculate the value dataframe.
         """
-        self.values = self._inter_df.transpose() @ self.lam
+        self.values = self._inter_df @ self.lam
 
     ########################
     # State checking functions
