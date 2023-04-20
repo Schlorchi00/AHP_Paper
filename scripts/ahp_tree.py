@@ -253,7 +253,7 @@ def build_base_tree_1():
     node_A1131 = TreeNode.from_values(node_A1131_f, 'E_Modulus_0_values')
 
     node_A1211 = TreeNode.from_values(node_A1211_f, 'Tensile_stress_90_values')
-    node_A1221 = TreeNode.from_values(node_A1221_f, 'Tensile_stress_90_values')
+    node_A1221 = TreeNode.from_values(node_A1221_f, 'Tensile_strength_90_values')
     node_A1231 = TreeNode.from_values(node_A1231_f, 'E_Modulus_90_values')
     
 
