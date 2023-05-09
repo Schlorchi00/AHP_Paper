@@ -1,5 +1,6 @@
 import os.path
 import openpyxl
+import numpy as np
 from ahp.utils import *
 
 
@@ -60,8 +61,6 @@ def read_domain(subdomain, filename, data = 'data'):
     df_path = os.path.join(datadir,filename)
     return df_path
 
-#create data frames
-
 def create_df(df_path):
     """
     modifies a workbook into a suitable dataframe
@@ -98,9 +97,24 @@ def extract_params(df):
 
     return dict_params, dict_alternatives, leaf_values
 
+def norm_values(leaf_values, flag=0):
+    """
+    Normalization of leaf values
+    :param leaf_values: list of leaf values
+    :param flag: integer: 0 = normalization_max (default); else: normalization_min
+    :return: normalized array of leaf values
+    """
 
+    leaf_values_arr = np.array(leaf_values)
+    row_amount = list(range(len(leaf_values_arr)))
 
+    if flag == 0:
+        leaf_values_arr_norm = normalize_max(leaf_values_arr, row_amount)
 
+    else:
+        leaf_values_arr_norm = normalize_min(leaf_values_arr, row_amount)
+
+    return leaf_values_arr_norm
 
 
 if __name__=="__main__":
@@ -117,6 +131,9 @@ if __name__=="__main__":
 
     eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
 
+    #normalization procedure
+
+    eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
 
 
 

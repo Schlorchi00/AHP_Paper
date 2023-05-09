@@ -21,3 +21,25 @@ def read_from_xlsx():
 
 def write_to_xlsx():
     raise NotImplementedError("Not implemented yet")
+
+#normalization I
+def normalize_max(arr,rownumber):
+    '''
+    normalization, if considering highest value as reference
+
+    :param arr: array of normalizing values
+    :param rownumber: size of array to normalize
+    :return: normalized array
+    '''
+    return ((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min())
+
+#normalization II
+def normalize_min(arr,rownumber):
+    '''
+    normalization, if considering smallest value as reference
+
+    :param arr: array of normalizing values
+    :param rownumber: size of array to normalize
+    :return: normalized array
+    '''
+    return 1-(((arr[rownumber,:])-arr[rownumber,:].min())/(arr[rownumber,:].max()-arr[rownumber,:].min()))
