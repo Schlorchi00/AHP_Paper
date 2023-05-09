@@ -8,34 +8,14 @@ from ahp.utils import *
             * from an excel file
         
         ! Structure Data
-            * Ecology Table:
+            * Expected Table structure:
                                 Atlernative I   Alternative II  ... Alternative n
                     Param I         Value           Value       ...     Value
                     Param II        ...
                     Param III       ...                                     
-                    Total           ...                                 ...
-        
-            * Performance Table = [Sheet 1 = Param 1, Param 2, Param 3]
-                * Each Param:
-                
-                                 Atlernative I   Alternative II  ... Alternative n
-                    Max             Value           Value       ...     Value
-                    Min             ...
-                    Mean            ...                                     
-                    Stdv            ...                                 ...
-            
-            * Process Table = [Sheet 1 = Param 1, Param 2]
-                * Each Param:
-                
-                                 Atlernative I   Alternative II  ... Alternative n
-                    Max             Value           Value       ...     Value
-                    Min             ...
-                    Mean            ...                                     
-                    Stdv            ...                                 ...
+                    Param ...n      ...
                     
-            * Cost Table:
-                                Atlernative I   Alternative II  ... Alternative n
-                    Param I         Value           Value       ...     Value
+                    Sheetname = Parentnode name
                     
                     
         ! Preprocessing should be 
@@ -46,8 +26,7 @@ from ahp.utils import *
                     * [ ] apply normalization method
                         * [ ] define if minimum or maximum threshold is required (maybe with flag)
                         * [ ] set thresholds in first and last column (maybe other module)
-                            * [ ] Check which Table (Performance, Process, Ecology, Cost)
-                            * [ ] Extract params (other module)
+                            * [ ] Extract params (other module) #TODO: Tables in one format /Sheetname Change to parent node name
                             + [ ] Store them in dictionary
                                 * load  .xlsx - file
                                 
@@ -79,57 +58,47 @@ def read_domain(subdomain, filename, data = 'data'):
     ppath = os.path.join(os.path.abspath(os.path.dirname(__file__)))
     datadir = os.path.join(ppath, '..', data, subdomain)
     df_path = os.path.join(datadir,filename)
-    wb = openpyxl.load_workbook(df_path)
-
-    return wb
+    return df_path
 
 #create data frames
 
-def create_df(wb, sheet1 = 'Sheet1', sheet2 = None, sheet3 = None):
+def create_df(df_path):
     """
     modifies a workbook into a suitable dataframe
     :param wb: workbook
     :return: dataframe
     """
-    if sheet2 == None  and sheet3 == None:
-        sheet_1 = wb[sheet1]
-        df = pd.DataFrame(sheet_1.values)
-        df = df.rename(columns=df.iloc[1])
-        df = df.iloc[2:,:].reset_index(drop=True)
+    wb = openpyxl.load_workbook(df_path)
 
-        return df
+    if not wb.sheetnames == None:
 
-    if sheet3 == None:
+        df = pd.read_excel(df_path)
+        df.drop(df.index[0])
+        p_node_name = wb.sheetnames
+        df = df.set_index(df.columns[0])
 
-        sheet_1 = wb[sheet1]
-        df = pd.DataFrame(sheet_1.values)
-        df = df.rename(columns=df.iloc[1])
-        df_1 = df.iloc[2:,:].reset_index(drop=True)
+        return df, p_node_name
 
-        sheet_2 = wb[sheet2]
-        df = pd.DataFrame(sheet_2.values)
-        df = df.rename(columns=df.iloc[1])
-        df_2 = df.iloc[2:, :].reset_index(drop=True)
+def extract_params(df):
+    """
+    extract params, alternativ, and leaf values
+    :param df: dataframe of the parameters
+    :return: list of params, alternatives and leaf values
+    """
+    df = df.T
+    param_dict = df.to_dict()
+    dict_params = list(param_dict.keys())
+    dict_alternatives = list(param_dict[next(iter(param_dict))].keys())
 
-        return df_1, df_2
+    leaf_values = []
 
-    else:
-        sheet_1 = wb[sheet1]
-        df = pd.DataFrame(sheet_1.values)
-        df = df.rename(columns=df.iloc[1])
-        df_1 = df.iloc[2:, :].reset_index(drop=True)
+    for key, value in param_dict.items():
 
-        sheet_2 = wb[sheet2]
-        df = pd.DataFrame(sheet_2.values)
-        df = df.rename(columns=df.iloc[1])
-        df_2 = df.iloc[2:, :].reset_index(drop=True)
+        leaf_values.append(list(value.values()))
 
-        sheet_3 = wb[sheet3]
-        df = pd.DataFrame(sheet_3.values)
-        df = df.rename(columns=df.iloc[1])
-        df_3 = df.iloc[2:, :].reset_index(drop=True)
+    return dict_params, dict_alternatives, leaf_values
 
-        return df_1, df_2, df_3
+
 
 
 
@@ -140,15 +109,19 @@ if __name__=="__main__":
 
     #read files TODO: Check correctness regarding amount of leaf nodes
 
-    wb_eco = read_domain('ecology', 'LCA_Endpoints_PLA_Coins.xlsx')
-    wb_mech_90 = read_domain('performance', 'Mechanical_Params_90_degrees.xlsx')
-    wb_mech_0 = read_domain('performance', 'Mechanical_Params_0_degrees.xlsx')
-    wb_process_fila = read_domain('process', 'FILA_CHAR.xlsx')
-    wb_process_mvr = read_domain('process', 'MFI_Polymers.xlsx')
-    wb_cost = read_domain('cost', 'cost_polymers.xlsx')
-
+    df_path_eco = read_domain('ecology_format', 'LCA_PLA_Cuboid.xlsx')
     #create df
-    df_mech_90 = create_df(wb_mech_90, sheet1 = 'E_modulus', sheet2='tensile strain', sheet3='tensile stress')
+    df_eco, p_node_name_eco = create_df(df_path_eco)
+
+    #extract params
+
+    eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
+
+
+
+
+
+
 
 
     # preprocess here
