@@ -110,9 +110,11 @@ def norm_values(leaf_values, flag=0):
 
     if flag == 0:
         leaf_values_arr_norm = normalize_max(leaf_values_arr, row_amount)
+        leaf_values_arr_norm = [ele[1:-1] for ele in leaf_values_arr_norm]
 
     else:
         leaf_values_arr_norm = normalize_min(leaf_values_arr, row_amount)
+        leaf_values_arr_norm = [ele[1:-1] for ele in leaf_values_arr_norm]
 
     return leaf_values_arr_norm
 
@@ -154,12 +156,19 @@ if __name__=="__main__":
     eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params)
 
     #normalization procedure
-
     #TODO: normalization flag -> user-decided?
     eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
 
 
     #transform
+    trans_list = []
+
+    for i, row in enumerate(eco_leaf_values_norm):
+        df = pd.DataFrame(row, columns=[eco_params[i]])
+        df.index = [eco_alternatives]
+        trans_list.append(df)
+
+
     '''
     def myfunction(x):
     return x[0] + x[1]**2 + x[2]**3
