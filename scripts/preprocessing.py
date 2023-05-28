@@ -135,61 +135,51 @@ def min_max_threshold(leaf_value_list, value_params):
 
     return leaf_value_list
 
+def leaf_param_transform(leaf_value_norm, value_params, value_alternatives):
+    '''
+    split params into transposed dataframe and store in list
+    :param leaf_value_norm: array of normalized leaf values
+    :param value_params: list of strings regarding parameter names
+    :param value_alternatives: list of strings regarding alternative names
+    :return: list of 1-column dataframe regarding the splitted parameters
+    '''
+    trans_list = []
+
+    for i, row in enumerate(leaf_value_norm):
+        df = pd.DataFrame(row, columns=[value_params[i]])
+        df.index = [value_alternatives]
+        trans_list.append(df)
+
+    return trans_list
+
+def write_to_excel(trans_list, value_params):
+
+    for i,el in enumerate(trans_list):
+        el.to_excel(value_params[i]+'.xlsx')
+
 
 if __name__=="__main__":
 
     print_something()
 
     #read files TODO: Check correctness regarding amount of leaf nodes
-
     df_path_eco = read_domain('ecology_format', 'LCA_PLA_Cuboid.xlsx')
 
     #create df
     df_eco, p_node_name_eco = create_df(df_path_eco)
 
     #extract params
-
     eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
 
     #add min-max-treshold
-
     eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params)
 
     #normalization procedure
     #TODO: normalization flag -> user-decided?
     eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
 
-
     #transform
-    trans_list = []
+    eco_trans_list = leaf_param_transform(eco_leaf_values_norm, eco_params, eco_alternatives)
 
-    for i, row in enumerate(eco_leaf_values_norm):
-        df = pd.DataFrame(row, columns=[eco_params[i]])
-        df.index = [eco_alternatives]
-        trans_list.append(df)
-
-
-    '''
-    def myfunction(x):
-    return x[0] + x[1]**2 + x[2]**3
-
-    print(np.apply_along_axis(myfunction, axis=1, arr=myarray))
-    
-    transform each row into a 1 x len(array) vector
-    save row as excel with param_name
-    
-    '''
-
-
-
-
-
-
-
-    # preprocess here
-
-    # read files
-    #read_from_xlsx()
-
-    # write to excel file
-    #write_to_xlsx()
+    #write to excel
+    write_to_excel(eco_trans_list, eco_params)
