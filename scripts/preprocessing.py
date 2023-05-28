@@ -116,6 +116,23 @@ def norm_values(leaf_values, flag=0):
 
     return leaf_values_arr_norm
 
+def min_max_threshold(leaf_value_list, value_params):
+    """
+    extension of value list with min and max threshold
+    :param leaf_value_list: list of leaf values
+    :param value_params: list of parameter names
+    :return: extended value list
+    """
+
+    for i in range(len(leaf_value_list)):
+
+        min_val = float(input('Whats the minimum value for {} ?'.format(value_params[i])))
+        max_val = float(input('Whats the maximum value for {} ?'.format(value_params[i])))
+        eco_leaf_values[i].insert(0, min_val)
+        eco_leaf_values[i].append(max_val)
+
+    return leaf_value_list
+
 
 if __name__=="__main__":
 
@@ -124,6 +141,7 @@ if __name__=="__main__":
     #read files TODO: Check correctness regarding amount of leaf nodes
 
     df_path_eco = read_domain('ecology_format', 'LCA_PLA_Cuboid.xlsx')
+
     #create df
     df_eco, p_node_name_eco = create_df(df_path_eco)
 
@@ -131,9 +149,27 @@ if __name__=="__main__":
 
     eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
 
+    #add min-max-treshold
+
+    eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params)
+
     #normalization procedure
 
+    #TODO: normalization flag -> user-decided?
     eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
+
+
+    #transform
+    '''
+    def myfunction(x):
+    return x[0] + x[1]**2 + x[2]**3
+
+    print(np.apply_along_axis(myfunction, axis=1, arr=myarray))
+    
+    transform each row into a 1 x len(array) vector
+    save row as excel with param_name
+    
+    '''
 
 
 
