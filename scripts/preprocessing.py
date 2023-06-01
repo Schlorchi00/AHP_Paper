@@ -172,14 +172,14 @@ if __name__=="__main__":
     eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
 
     #add min-max-treshold
-    eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params)
+    eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params) #TODO: default= None, arg-parsing -> tuple min-max
 
     #normalization procedure
-    #TODO: normalization flag -> user-decided?
+    #TODO: inversion flag -> user-decided?
     eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
 
     #transform
     eco_trans_list = leaf_param_transform(eco_leaf_values_norm, eco_params, eco_alternatives)
 
     #write to excel
-    write_to_excel(eco_trans_list, eco_params)
+    write_to_excel(eco_trans_list, eco_params) # -> Output Pandas series für die leaf values
