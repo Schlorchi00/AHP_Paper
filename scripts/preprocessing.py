@@ -2,7 +2,7 @@ import os.path
 import openpyxl
 import numpy as np
 from ahp.utils import *
-
+from argparse import ArgumentParser
 
 """
         ! Required for Preprocessing
@@ -43,9 +43,14 @@ from ahp.utils import *
                 
 """
 
-
-def print_something():
-    print("Use this structure to develop functions. Only move to utils when done")
+def parse_args():
+    parser = ArgumentParser(description="File for running an ahp.")
+    parser.add_argument("-i", "--input", type=str, help="Location of the file listing the excel files", required=True)
+    parser.add_argument("-o", "--output", type=str, help="Directory where the <value> files should be output to. Default None, \
+                        if None, will print to command line", default=None)
+    parser.add_argument("--scaling", action="store_true", help="Whether a second sheet will be supplied that provides scaling for the parameters")
+    args = parser.parse_args()
+    return vars(args)
 
 def read_domain(subdomain, filename, data = 'data'):
     """
@@ -67,119 +72,76 @@ def create_df(df_path):
     :param wb: workbook
     :return: dataframe
     """
-    wb = openpyxl.load_workbook(df_path)
+    # reusing previous functions from utils
+    df = read_excel(df_path, False)
+    # returning the sheet name for the node name
+    dff = pd.ExcelFile(df_path).sheet_names[0]
+    # adding the argument whether scaling is used
+    return df, dff
 
-    if not wb.sheetnames == None:
-
-        df = pd.read_excel(df_path)
-        df.drop(df.index[0])
-        p_node_name = wb.sheetnames
-        df = df.set_index(df.columns[0])
-
-        return df, p_node_name
-
-def extract_params(df):
+def get_scaling(df_path):
     """
-    extract params, alternativ, and leaf values
-    :param df: dataframe of the parameters
-    :return: list of params, alternatives and leaf values
+        gets the scaling from the SECOND sheet name
     """
-    df = df.T
-    param_dict = df.to_dict()
-    dict_params = list(param_dict.keys())
-    dict_alternatives = list(param_dict[next(iter(param_dict))].keys())
+    scale_df = pd.read_excel(df_path, 1, index_col=0, header=0).squeeze("columns")
+    return scale_df
 
-    leaf_values = []
-
-    for key, value in param_dict.items():
-
-        leaf_values.append(list(value.values()))
-
-    return dict_params, dict_alternatives, leaf_values
-
-def norm_values(leaf_values, flag=0):
+def apply_scaling(df : pd.DataFrame, df_scale : pd.DataFrame) -> pd.DataFrame:
     """
-    Normalization of leaf values
-    :param leaf_values: list of leaf values
-    :param flag: integer: 0 = normalization_max (default); else: normalization_min
-    :return: normalized array of leaf values
+        Function to apply the scaling according to the values set out by the scaling
     """
+    df2 = df.copy(deep=True)
+    # print(df2)
+    for idx, row in df.iterrows():
+        print(idx)
+        mi = df_scale.at[idx, "Min"]
+        ma = df_scale.at[idx, "Max"]
+        inv = df_scale.at[idx, "Inversion"]
+        if pd.notna(mi):
+            row = row - mi
+        else:
+            row = row - row.min()
+        if pd.notna(ma):
+            row = row / ma
+        else:
+            row = row / row.max()
+        if inv and pd.notna(inv):
+            row = 1 - row
+        print(row)
+        df2.loc[idx,:] = row
+    # print(df2)
+    return df2
 
-    leaf_values_arr = np.array(leaf_values)
-    row_amount = list(range(len(leaf_values_arr)))
-
-    if flag == 0:
-        leaf_values_arr_norm = normalize_max(leaf_values_arr, row_amount)
-        leaf_values_arr_norm = [ele[1:-1] for ele in leaf_values_arr_norm]
-
-    else:
-        leaf_values_arr_norm = normalize_min(leaf_values_arr, row_amount)
-        leaf_values_arr_norm = [ele[1:-1] for ele in leaf_values_arr_norm]
-
-    return leaf_values_arr_norm
-
-def min_max_threshold(leaf_value_list, value_params):
+def empty_scaling(df : pd.DataFrame) -> pd.DataFrame:
     """
-    extension of value list with min and max threshold
-    :param leaf_value_list: list of leaf values
-    :param value_params: list of parameter names
-    :return: extended value list
+        Function to return empty scaling. No inversion, no min max values, nothing
     """
+    df2 = df.sub(df.min(axis=1), axis=0)
+    df2 = df2.div(df2.max(axis=1), axis=0)
+    return df2
 
-    for i in range(len(leaf_value_list)):
-
-        min_val = float(input('Whats the minimum value for {} ?'.format(value_params[i])))
-        max_val = float(input('Whats the maximum value for {} ?'.format(value_params[i])))
-        eco_leaf_values[i].insert(0, min_val)
-        eco_leaf_values[i].append(max_val)
-
-    return leaf_value_list
-
-def leaf_param_transform(leaf_value_norm, value_params, value_alternatives):
-    '''
-    split params into transposed dataframe and store in list
-    :param leaf_value_norm: array of normalized leaf values
-    :param value_params: list of strings regarding parameter names
-    :param value_alternatives: list of strings regarding alternative names
-    :return: list of 1-column dataframe regarding the splitted parameters
-    '''
-    trans_list = []
-
-    for i, row in enumerate(leaf_value_norm):
-        df = pd.DataFrame(row, columns=[value_params[i]])
-        df.index = [value_alternatives]
-        trans_list.append(df)
-
-    return trans_list
-
-def write_to_excel(trans_list, value_params):
-
-    for i,el in enumerate(trans_list):
-        el.to_excel(value_params[i]+'.xlsx')
-
+def check_consistency(df : pd.DataFrame):
+    assert (df > 0).any().any(), "Dataframe has negative values. Check for consistency"
+    assert (df <= 1.0).any().any(), "Dataframe has values larger than 1. Check for consistency"
 
 if __name__=="__main__":
-
-    print_something()
-
+    
     #read files TODO: Check correctness regarding amount of leaf nodes
     df_path_eco = read_domain('ecology_format', 'LCA_PLA_Cuboid.xlsx')
 
+    scaling = False  # late TODO: move to arg
     #create df
     df_eco, p_node_name_eco = create_df(df_path_eco)
+    if scaling:
+        scale_df = get_scaling(df_path_eco)
+        # apply the scaling
+        df2 = apply_scaling(df_eco, scale_df)
+    else:
+        # case when the normal values are used to generate the values
+        df2 = empty_scaling(df_eco)
+        print(df2)
+    check_consistency(df2)
 
-    #extract params
-    eco_params, eco_alternatives, eco_leaf_values = extract_params(df_eco)
-
-    #add min-max-treshold
-    eco_leaf_values_ext = min_max_threshold(eco_leaf_values, eco_params) #TODO: default= None, arg-parsing -> tuple min-max
-
-    #normalization procedure
-    #TODO: inversion flag -> user-decided?
-    eco_leaf_values_norm = norm_values(eco_leaf_values, 1)
-
-    #transform
-    eco_trans_list = leaf_param_transform(eco_leaf_values_norm, eco_params, eco_alternatives)
-
-    #write to excel
-    write_to_excel(eco_trans_list, eco_params) # -> Output Pandas series für die leaf values
+    # Write to excel
+    # TODO: Continue here
+    
