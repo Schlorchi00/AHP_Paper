@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def read_excel(fpath : str, series : bool = False) -> list:
     # multiple workbooks
@@ -11,6 +12,17 @@ def read_excel(fpath : str, series : bool = False) -> list:
     # return df_list
     return df
 
+def write_value_excel(df : pd.DataFrame, output_folder : str):
+    """
+        test file to write a dataframe from recorded values into series excels
+    """
+    assert os.isdir(output_folder), "{} not a directory. needs to be a directory for files to be written".format(output_folder)
+    for vn in df.index.to_list():
+        ser = df.loc[vn]
+        out_fname = os.path.join(output_folder, vn + ".xlsx")
+        with pd.ExcelWriter(out_fname) as writer:
+            ser.to_excel(writer)
+    print("Written {} files to {}".format(len(df.index.to_list()), output_folder))
 
 ##################
 # TODO: Utility functions for preprocessing below
