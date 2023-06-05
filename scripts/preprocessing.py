@@ -1,13 +1,13 @@
 import os.path
 import openpyxl
 import numpy as np
-from ahp.utils import *
+from src.ahp.utils import *
 from argparse import ArgumentParser
 
 """
     Usage:
         1. activate environment in command line `conda activate <env_name>`
-        2. run in command line from parent folder (e.g. the one above scripts) `python scripts/preprocessing.py -i data/ecology_format/LCA_PLA_Cuboid.xlsx
+        2. run in command line from parent folder (e.g. the one above scripts) python scripts/preprocessing.py -i data/ecology_format/LCA_PLA_Cuboid.xlsx
         3. OPTIONAL - to use scaling, which is in SECOND SHEET of the file, use --scaling or -s argument
         4. OPTIONAL - to store as xlsx files, provide additional -o argument with a directory. P.ex. `[...] -o data/test_output`
 """
