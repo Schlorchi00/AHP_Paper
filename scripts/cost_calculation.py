@@ -1,3 +1,19 @@
+"""
+    Input format:
+        * data/cost/PLA_cost_table.xlsx
+    Output format:
+        * data/cost_format/Cost_PLA.xlsx
+            * PLA_Virgin - is one input value
+            * PLA_recycled - kommt aus input_format
+                * benutzt berechnungen in cost_calculation
+            * PLA_recycled industrial - kommt aus input format, aber mit anderen werten.
+        * 2 x input XLSX - werden genau gleich berechnet
+        * 1 x fixer wert - von command line
+        * Format was rauskommt sollte im gleichen format sein wie die anderen VALUES-RAW excel, vor Skalierung!
+    NEXT STEP:
+        * soll den gleichen verlauf gehen wie die anderen dateien durch scripts/preprocessing
+"""
+
 import openpyxl
 
 from ahp.cost_calculation import create_df, total_cost

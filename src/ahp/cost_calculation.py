@@ -29,6 +29,15 @@ def maschine_purchase_cost(df_process):
 
     return (df_process.iloc[:,0].values*df_process.iloc[:,1].values)/(0.95*24*365*df_process.iloc[:,3].values)
 
+def mach_purch_cost(df):
+    rc = df.iloc[:,3]
+    pc = df.iloc[:,1]
+    am = df.iloc[:,2]
+    mach_Pc = _mach_purch_cost(rc, pc, am)
+    return mach_Pc
+
+def _mach_purch_cost(running_cost: int, purchase_cost : int, amortization : int):
+    return amortization * purchase_cost / (0.95 * 24 * 365 * running_cost)
 
 def operational_cost(df_process, int):
 
@@ -57,6 +66,12 @@ def material_cost(df_process):
 
     return df_process.iloc[:,11]*df_process.iloc[:,12]
 
+def material_cost(df):
+    mc = _material_cost(df.iloc[11], df.iloc[12])
+    return mc
+
+def _material_cost(c1 : int, c2 : int):
+    return c1 * c2
 
 def labour_cost(df_process):
     """

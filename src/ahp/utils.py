@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+import os.path
 
 def read_excel(fpath : str, series : bool = False) -> list:
     # multiple workbooks
@@ -16,7 +16,7 @@ def write_value_excel(df : pd.DataFrame, output_folder : str):
     """
         test file to write a dataframe from recorded values into series excels
     """
-    assert os.isdir(output_folder), "{} not a directory. needs to be a directory for files to be written".format(output_folder)
+    assert os.path.isdir(output_folder), "{} not a directory. needs to be a directory for files to be written".format(output_folder)
     for vn in df.index.to_list():
         ser = df.loc[vn]
         out_fname = os.path.join(output_folder, vn + ".xlsx")
