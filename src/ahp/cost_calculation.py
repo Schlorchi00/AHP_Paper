@@ -1,35 +1,26 @@
 import numpy as np
 import pandas as pd
-import openpyxl
+import os.path
 
-
-
-#create data frames
-
-def create_df(wb):
+def read_sheets(path : str) -> dict:
     """
-    modifies a workbook into a suitable dataframe
-    :param wb: workbook
-    :return: dataframe
+        Function to read ALL sheets from a file and return as a pandas df
+        specifically for the cost format
     """
+    with open(path, 'rb') as f:
+        df_dict = pd.read_excel(f,sheet_name=None, header=[0,1])  # sheet_name=None
+    # TODO: changing the index
+    # basename = _get_basename(path)
+    # for df in df_dict:
+    #     df['material'] = basename
+    #     df.set_index('material')
+    return df_dict
 
-    df = pd.DataFrame(wb.values)
-    df = df.rename(columns=df.iloc[1])
-    df = df.iloc[2:,:].reset_index(drop=True)
+def _get_basename(path : str) -> str:
+    return os.path.basename(path).split('.')[0]
 
-    return df
-
-
-def maschine_purchase_cost(df_process):
-    """
-    calculates the relative purchase cost of the machine
-    :param df_process: dataframe values of the process/machine
-    :return: purchase machine cost
-    """
-
-    return (df_process.iloc[:,0].values*df_process.iloc[:,1].values)/(0.95*24*365*df_process.iloc[:,3].values)
-
-def mach_purch_cost(df):
+##### Calculation Section
+def mach_purch_cost(df : pd.DataFrame):
     rc = df.iloc[:,3]
     pc = df.iloc[:,1]
     am = df.iloc[:,2]
@@ -39,60 +30,115 @@ def mach_purch_cost(df):
 def _mach_purch_cost(running_cost: int, purchase_cost : int, amortization : int):
     return amortization * purchase_cost / (0.95 * 24 * 365 * running_cost)
 
-def operational_cost(df_process, int):
+# def maschine_purchase_cost(df_process):
+#     """
+#     calculates the relative purchase cost of the machine
+#     :param df_process: dataframe values of the process/machine
+#     :return: purchase machine cost
+#     """
 
+#     return (df_process.iloc[:,0].values*df_process.iloc[:,1].values)/(0.95*24*365*df_process.iloc[:,3].values)
+
+def operational_cost(df : pd.DataFrame, time : bool=False):
     """
-    calculates the operational cost of the maschine process
-    :param df_process: dataframe values of the process/machine
-    :param int: 0 - calculates the machine cost regarding time; 1 - calculates the machine cost regarding energy
-    :return: operational cost
+        returns the operational cost. If time is False, uses energy. If time is True, uses time values from the dataframe 
     """
-
-    #cost calculation regarding time
-    if int == 0:
-        return df_process.iloc[:,3]*df_process.iloc[:,5]
-
-    #cost calculaiton regarding energy
+    if time:
+        val_1 = df.iloc[3]
+        val_2 = df.iloc[5]
     else:
-        return df_process.iloc[:,4]*df_process.iloc[:,6]
+        val_1 = df.iloc[4]
+        val_2 = df.iloc[6]
+    return _operational_cost(val_1, val_2)
 
-
-def material_cost(df_process):
+def _operational_cost(val_1, val_2):
     """
-    calculates the material cost used for the machine process
-    :param df_process: dataframe values of the process/machine
-    :return: material cost
+        calculates the machine cost regarding
     """
+    return val_1 * val_2
 
-    return df_process.iloc[:,11]*df_process.iloc[:,12]
+# def operational_cost(df_process, int):
 
-def material_cost(df):
-    mc = _material_cost(df.iloc[11], df.iloc[12])
+#     """
+#     calculates the operational cost of the maschine process
+#     :param df_process: dataframe values of the process/machine
+#     :param int: 0 - calculates the machine cost regarding time; 1 - calculates the machine cost regarding energy
+#     :return: operational cost
+#     """
+#     #cost calculation regarding time
+#     if int == 0:
+#         return df_process.iloc[:,3]*df_process.iloc[:,5]
+#     #cost calculaiton regarding energy
+#     else:
+#         return df_process.iloc[:,4]*df_process.iloc[:,6]
+
+
+def material_cost(df : pd.DataFrame):
+    c1 = df.iloc[11]
+    c2 = df.iloc[12]
+    mc = _material_cost(c1 , c2)
     return mc
 
 def _material_cost(c1 : int, c2 : int):
     return c1 * c2
 
-def labour_cost(df_process):
+# def material_cost(df_process):
+#     """
+#     calculates the material cost used for the machine process
+#     :param df_process: dataframe values of the process/machine
+#     :return: material cost
+#     """
+
+#     return df_process.iloc[:,11]*df_process.iloc[:,12]
+
+def labour_cost(df : pd.DataFrame):
     """
-    calculates the labour cost regarding prae, proc, post
-    :param df_process: dataframe values of the process/machine
-    :return: labour cost
+        calculates labour cost
     """
+    v1 = df.iloc[7]
+    v2 = df.iloc[8]
+    v3 = df.iloc[9]
+    v4 = df.iloc[10]
+    return _labour_cost(v1, v2, v3, v4)
 
-    return (df_process.iloc[:,7]+df_process.iloc[:,8]+df_process.iloc[:,9])/df_process.iloc[:,10]
-
-
-
-def maintenance_cost(df_process):
+def _labour_cost(v1, v2, v3, v4):
     """
-    calculates the maintenance cost
-    :param df_process: dataframe values of the process/machine
-    :return: maintenance cost
+        calculation of labour cost
     """
+    return (v1 + v2 + v3) / v4
 
-    return ((df_process.iloc[:,13]+df_process.iloc[:,14]*df_process.iloc[:,17])*df_process.iloc[:,15])\
-           /(0.95*24*365*df_process.iloc[:,16])
+# def labour_cost(df_process):
+#     """
+#     calculates the labour cost regarding prae, proc, post
+#     :param df_process: dataframe values of the process/machine
+#     :return: labour cost
+#     """
+
+#     return (df_process.iloc[:,7]+df_process.iloc[:,8]+df_process.iloc[:,9])/df_process.iloc[:,10]
+
+def maintenance_cost(df : pd.DataFrame):
+    """
+        Function to calculate the maintenance cost
+    """
+    v1 = df.iloc[13]
+    v2 = df.iloc[14]
+    v3 = df.iloc[17]
+    v4 = df.iloc[15]
+    v5 = df.iloc[16]
+    return _maintenance_cost(v1,  v2, v3, v4, v5)
+
+def _maintenance_cost(v1, v2, v3, v4, v5):
+    return ((v1 + v2 * v3) * v4) / (0.95 * 24 * 365 * v5)
+
+# def maintenance_cost(df_process):
+#     """
+#     calculates the maintenance cost
+#     :param df_process: dataframe values of the process/machine
+#     :return: maintenance cost
+#     """
+
+#     return ((df_process.iloc[:,13]+df_process.iloc[:,14]*df_process.iloc[:,17])*df_process.iloc[:,15])\
+#            /(0.95*24*365*df_process.iloc[:,16])
 
 
 def cost_position(df_process):

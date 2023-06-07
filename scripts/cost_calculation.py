@@ -14,10 +14,9 @@
         * soll den gleichen verlauf gehen wie die anderen dateien durch scripts/preprocessing
 """
 
-import openpyxl
+# import openpyxl
 
-from ahp.cost_calculation import create_df, total_cost
-
+from ahp.cost_calculation import create_df, total_cost, read_sheets
 from argparse import ArgumentParser
 
 def parse_args():
@@ -34,21 +33,10 @@ if __name__ == "__main__":
     path_costtable = args['input']
 
     # load data from excel workbook
-    wb = openpyxl.load_workbook(path_costtable)
-    shredd = wb['shredding']
-    extr = wb['extrusion']
-    gran = wb['granulate']
-    con = wb['conditioning']
+    wbs = read_sheets(path_costtable)
 
-    # create df
-    df_shredd = create_df(shredd)
-    df_extr = create_df(extr)
-    df_gran = create_df(gran)
-    df_con = create_df(con)
-
-    cost_list = [df_shredd, df_extr, df_gran, df_con]
-
-    tot_cost = total_cost(cost_list)
+    # Calculate the total cost
+    tot_cost = total_cost(wbs)
     print(tot_cost)
 
 
