@@ -21,14 +21,17 @@ def _get_basename(path : str) -> str:
 
 ##### Calculation Section
 def mach_purch_cost(df : pd.DataFrame):
-    rc = df.iloc[:,3]
-    pc = df.iloc[:,1]
-    am = df.iloc[:,2]
-    mach_Pc = _mach_purch_cost(rc, pc, am)
+    ser = df['machine_cost']
+    v1 = ser['machine_purchase_cost_[€]'][0]
+    v2 = ser['production_time_[y]'][0]
+    # ! CHECK IF THIS value below IS CORRECT
+    # todo
+    v3 = df['operational_cost']['production_time_[y]'][0]
+    mach_Pc = _mach_purch_cost(v1, v2, v3)
     return mach_Pc
 
-def _mach_purch_cost(running_cost: int, purchase_cost : int, amortization : int):
-    return amortization * purchase_cost / (0.95 * 24 * 365 * running_cost)
+def _mach_purch_cost(v1: int, v2 : int, v3 : int):
+    return v1 * v2 / (0.95 * 24 * 365 * v3)
 
 # def maschine_purchase_cost(df_process):
 #     """
@@ -43,12 +46,13 @@ def operational_cost(df : pd.DataFrame, time : bool=False):
     """
         returns the operational cost. If time is False, uses energy. If time is True, uses time values from the dataframe 
     """
+    ser = df['operational_cost']
     if time:
-        val_1 = df.iloc[3]
-        val_2 = df.iloc[5]
+        val_1 = ser['production_time_[y]'][0]
+        val_2 = ser['operational_rate_time_[y/kWh]'][0]
     else:
-        val_1 = df.iloc[4]
-        val_2 = df.iloc[6]
+        val_1 = ser['production_energy_[kWh]'][0]
+        val_2 = ser['operational_rate_energy_[€/kWh]'][0]
     return _operational_cost(val_1, val_2)
 
 def _operational_cost(val_1, val_2):
@@ -74,8 +78,9 @@ def _operational_cost(val_1, val_2):
 
 
 def material_cost(df : pd.DataFrame):
-    c1 = df.iloc[11]
-    c2 = df.iloc[12]
+    ser = df['material_cost']
+    c1 = ser['production_mass_[kg]'][0]
+    c2 = ser['material_rate_[€/kg]'][0]
     mc = _material_cost(c1 , c2)
     return mc
 
@@ -95,10 +100,11 @@ def labour_cost(df : pd.DataFrame):
     """
         calculates labour cost
     """
-    v1 = df.iloc[7]
-    v2 = df.iloc[8]
-    v3 = df.iloc[9]
-    v4 = df.iloc[10]
+    ser = df['labour_cost']
+    v1 = ser['praeprocess_[h]'][0]
+    v2 = ser['process_[h]'][0]
+    v3 = ser['postprocess_[h]'][0]
+    v4 = ser['labour_rate_[€/h]'][0]
     return _labour_cost(v1, v2, v3, v4)
 
 def _labour_cost(v1, v2, v3, v4):
@@ -120,11 +126,12 @@ def maintenance_cost(df : pd.DataFrame):
     """
         Function to calculate the maintenance cost
     """
-    v1 = df.iloc[13]
-    v2 = df.iloc[14]
-    v3 = df.iloc[17]
-    v4 = df.iloc[15]
-    v5 = df.iloc[16]
+    ser = df['maintenance_cost']
+    v1 = ser['cost_spare_parts_[€]'][0]
+    v2 = ser['labour_time_[h]'][0]
+    v3 = ser['production_time_[y]'][0]
+    v4 = ser['machine_life_span_[y]'][0]
+    v5 = ser['maintenance_rate_[€/h]'][0]
     return _maintenance_cost(v1,  v2, v3, v4, v5)
 
 def _maintenance_cost(v1, v2, v3, v4, v5):
@@ -141,22 +148,23 @@ def _maintenance_cost(v1, v2, v3, v4, v5):
 #            /(0.95*24*365*df_process.iloc[:,16])
 
 
-def cost_position(df_process):
+def cost_position(df : pd.DataFrame):
     """
     Accumulates the cost position of the machine regarding all cost position elements
     :param df_process: dataframe values of the process/machine
     :return: overall cost of one cost position
+    TODO: could pass the series in here instead of the dfs. Check first if machine purchase cost v3 is correct
     """
 
-    mpc = maschine_purchase_cost(df_process)
-    oc = operational_cost(df_process, 1)
-    mc = material_cost(df_process)
-    lc = labour_cost(df_process)
-    mtc = maintenance_cost(df_process)
+    mpc = mach_purch_cost(df)
+    oc = operational_cost(df, time=True)
+    mc = material_cost(df)
+    lc = labour_cost(df)
+    mtc = maintenance_cost(df)
 
     return mpc + oc + mc + lc + mtc
 
-def total_cost(df_list):
+def total_cost(wbs : dict[pd.DataFrame]):
     """
     calculates the cost of all cost positions
     :param df_list: list of all cost positions
@@ -164,11 +172,10 @@ def total_cost(df_list):
     """
 
     tot_cost = 0
-    for el in df_list:
-        cost_pos = cost_position(el)
-        tot_cost +=cost_pos
-
-    return tot_cost[0]
+    for k, df in wbs.items():
+        tot_cost += cost_position(df)
+        
+    return tot_cost
 
 
 

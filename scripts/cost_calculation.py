@@ -16,7 +16,7 @@
 
 # import openpyxl
 
-from ahp.cost_calculation import create_df, total_cost, read_sheets
+from ahp.cost_calculation import total_cost, read_sheets
 from argparse import ArgumentParser
 
 def parse_args():
