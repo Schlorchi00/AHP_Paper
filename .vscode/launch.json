@@ -13,6 +13,10 @@
             "justMyCode": true,
             "args": [
                 "--input" , "data/cost/PLA_cost_table.xlsx",
+                "--input" , "data/cost/PP_cost_table.xlsx",
+                "--name", "PLA_Virgin",
+                "--value", "100",
+                "--output", "data/test_output/cost.xlsx",
                 // "--time"
             ]
         }

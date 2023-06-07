@@ -24,6 +24,12 @@ def write_value_excel(df : pd.DataFrame, output_folder : str):
             ser.to_excel(writer)
     print("Written {} files to {}".format(len(df.index.to_list()), output_folder))
 
+def write_cost_excel(df : pd.DataFrame, output_path : str):
+    """
+        Function to write the value dictionary to an output folder
+    """
+    pass
+
 ##################
 # TODO: Utility functions for preprocessing below
 ##############

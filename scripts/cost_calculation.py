@@ -19,17 +19,23 @@
     
 """
 
-# import openpyxl
-
 from ahp.cost_calculation import total_cost, read_sheets
+import pandas as pd
+import os.path
 from argparse import ArgumentParser
+from ahp.utils import write_cost_excel
 
 def parse_args():
-    parser = ArgumentParser(description="File for running a cost calculation.")
-    parser.add_argument("-i", "--input", type=str, help="Location of the cost excel file", required=True)
+    parser = ArgumentParser(description="File for running a cost calculation. Inputs can be provided over multiple excel files, or as a name-value pair. Use --input for providing excel files as a list (append by using --input <file1> --input <file2>\
+                            Use name-value pairs by using multiple --name and multiple --value tags. Must be same length and in order, otherwise will throw error.")
+    parser.add_argument("-i", "--input", type=str,  required=True, action="append", help="Location of the cost excel file. Accepts multiple arguments")
+    parser.add_argument("-n", "--name", action="append", help="Name of a material - will be used in output file. Caution - keep order!")
+    parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
+    parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
     args = parser.parse_args()
     return vars(args)
+
 
 
 # call main function - safeguard for external includes
@@ -38,15 +44,31 @@ if __name__ == "__main__":
     # set path
     path_costtable = args['input']
 
+    ns = args["name"]
+    print(ns)
+    vs = args["value"]
+    print(vs)
+    assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
+    ns_vs = {ns[i] : float(vs[i]) for i in range(len(ns))}
+
     # load data from excel workbook
-    wbs = read_sheets(path_costtable)
+    for pth in path_costtable:
+        basename = os.path.basename(pth).split(".")[0]
+        wbs = read_sheets(pth)
 
-    # Calculate the total cost
-    tot_cost = total_cost(wbs, args["time"])
-    print(tot_cost)
+        # Calculate the total cost
+        tot_cost = total_cost(wbs, args["time"])
+        # add it to the dictionary
+        ns_vs[basename] = tot_cost
 
+    df = pd.Series(ns_vs).to_frame().T
+    df.index = ["total_cost_filament"]
 
-
+    if args["output"]:
+        with pd.ExcelWriter(args["output"]) as writer:
+            df.to_excel(writer)
+    else:
+        print(df)
 
 
 
