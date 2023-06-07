@@ -12,6 +12,11 @@
         * Format was rauskommt sollte im gleichen format sein wie die anderen VALUES-RAW excel, vor Skalierung!
     NEXT STEP:
         * soll den gleichen verlauf gehen wie die anderen dateien durch scripts/preprocessing
+
+    TODO NIKO:
+        * cost of spare parts ist normalerweise "cost spare parts" und in Extrusion "cost of spare parts" -> name muss gleich sein!!
+        * gleieches fuer machine_purchase_cost -> machine_purchase cost
+    
 """
 
 # import openpyxl
@@ -22,6 +27,7 @@ from argparse import ArgumentParser
 def parse_args():
     parser = ArgumentParser(description="File for running a cost calculation.")
     parser.add_argument("-i", "--input", type=str, help="Location of the cost excel file", required=True)
+    parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
     args = parser.parse_args()
     return vars(args)
 
@@ -36,7 +42,7 @@ if __name__ == "__main__":
     wbs = read_sheets(path_costtable)
 
     # Calculate the total cost
-    tot_cost = total_cost(wbs)
+    tot_cost = total_cost(wbs, args["time"])
     print(tot_cost)
 
 

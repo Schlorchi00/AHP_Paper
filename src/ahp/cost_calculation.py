@@ -42,7 +42,7 @@ def _mach_purch_cost(v1: int, v2 : int, v3 : int):
 
 #     return (df_process.iloc[:,0].values*df_process.iloc[:,1].values)/(0.95*24*365*df_process.iloc[:,3].values)
 
-def operational_cost(df : pd.DataFrame, time : bool=False):
+def operational_cost(df : pd.DataFrame, time : bool):
     """
         returns the operational cost. If time is False, uses energy. If time is True, uses time values from the dataframe 
     """
@@ -148,7 +148,7 @@ def _maintenance_cost(v1, v2, v3, v4, v5):
 #            /(0.95*24*365*df_process.iloc[:,16])
 
 
-def cost_position(df : pd.DataFrame):
+def cost_position(df : pd.DataFrame, time : bool):
     """
     Accumulates the cost position of the machine regarding all cost position elements
     :param df_process: dataframe values of the process/machine
@@ -157,14 +157,14 @@ def cost_position(df : pd.DataFrame):
     """
 
     mpc = mach_purch_cost(df)
-    oc = operational_cost(df, time=True)
+    oc = operational_cost(df, time=time)
     mc = material_cost(df)
     lc = labour_cost(df)
     mtc = maintenance_cost(df)
 
     return mpc + oc + mc + lc + mtc
 
-def total_cost(wbs : dict[pd.DataFrame]):
+def total_cost(wbs : dict[pd.DataFrame], time: bool):
     """
     calculates the cost of all cost positions
     :param df_list: list of all cost positions
@@ -173,8 +173,8 @@ def total_cost(wbs : dict[pd.DataFrame]):
 
     tot_cost = 0
     for k, df in wbs.items():
-        tot_cost += cost_position(df)
-        
+        tot_cost += cost_position(df, time=time)
+
     return tot_cost
 
 

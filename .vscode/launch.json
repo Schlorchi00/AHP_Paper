@@ -12,7 +12,8 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--input" , "data/cost/PLA_cost_table.xlsx"
+                "--input" , "data/cost/PLA_cost_table.xlsx",
+                // "--time"
             ]
         }
     ]
