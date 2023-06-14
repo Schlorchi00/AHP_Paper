@@ -26,7 +26,7 @@ def mach_purch_cost(df : pd.DataFrame):
     v2 = ser['production_time_[y]'][0]
     # ! CHECK IF THIS value below IS CORRECT
     # todo: Changed into machine_life_span
-    v3 = df['machine_life_span_[y]'][0]
+    v3 = ser['machine_life_span_[y]'][0]
     mach_Pc = _mach_purch_cost(v1, v2, v3)
     return mach_Pc
 
