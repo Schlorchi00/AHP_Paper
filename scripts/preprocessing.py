@@ -48,6 +48,8 @@ def create_df(df_path):
     # adding the argument whether scaling is used
     return df, dff
 
+#TODO: What if best value is a value in between
+
 def get_scaling(df_path) -> pd.DataFrame:
     """
         gets the scaling from the SECOND sheet name
