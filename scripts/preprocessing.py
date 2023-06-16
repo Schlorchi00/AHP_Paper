@@ -78,7 +78,7 @@ def apply_scaling(df : pd.DataFrame, df_scale : pd.DataFrame) -> pd.DataFrame:
             row = row / row.max()
         if inv and pd.notna(inv):
             row = 1 - row
-        # print(row)
+        # TODO: quadratic scaling / Optimum_Threshold
         df2.loc[idx,:] = row
     # print(df2)
     return df2
