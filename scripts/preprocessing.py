@@ -1,7 +1,7 @@
 import os.path
 import openpyxl
 import numpy as np
-from src.ahp.utils import *
+from ahp.utils import *
 from argparse import ArgumentParser
 
 """
@@ -59,29 +59,66 @@ def get_scaling(df_path) -> pd.DataFrame:
 
 def apply_scaling(df : pd.DataFrame, df_scale : pd.DataFrame) -> pd.DataFrame:
     """
-        Function to apply the scaling according to the values set out by the scaling
+        Function to apply the scaling according to the values set out by the scaling.
+        If "Optimum" is supplied, only "Threshold" will be considered as second option.
+
     """
     df2 = df.copy(deep=True)
     # print(df2)
     for idx, row in df.iterrows():
-        print(idx)
+        # print(idx)
         mi = df_scale.at[idx, "Min"]
         ma = df_scale.at[idx, "Max"]
         inv = df_scale.at[idx, "Inversion"]
-        if pd.notna(mi):
-            row = row - mi
+        quad = df_scale.at[idx, "Optimal"]
+        thr = df_scale.at[idx, "Threshold"]
+        # Quadratic scaling or linear scaling
+        if quad and pd.notna(quad):
+            row = apply_quadratic_scaling(row, quad, thr)
         else:
-            row = row - row.min()
-        if pd.notna(ma):
-            row = row / ma
-        else:
-            row = row / row.max()
-        if inv and pd.notna(inv):
-            row = 1 - row
-        # TODO: quadratic scaling / Optimum_Threshold
+            row = apply_linear_scaling(row, mi, ma, inv)
+        # this could be turned into functional programming... if we want to
         df2.loc[idx,:] = row
-    # print(df2)
     return df2
+
+def apply_linear_scaling(row, mi, ma, inv):
+    """
+        Linear scaling function.
+        Parameters:
+            * row
+            * minimum
+            * maximum
+            * inversion
+    """
+    if pd.notna(mi):
+        row = row - mi
+    else:
+        row = row - row.min()
+    if pd.notna(ma):
+        row = row / ma
+    else:
+        row = row / row.max()
+    if inv and pd.notna(inv):
+        row = 1 - row
+    return row
+
+def apply_quadratic_scaling(row, quad, thr):
+    """
+        Applying the quadratic scaling function
+    """
+    row = (row - quad).abs()    # calculate absolute distance to the optimal value - already a min-scaling
+    if thr and pd.notna(thr):   # if a threshold is supplied, turn every value larger than the threshold to a 1.
+        # row[row >= thr] = 1.
+        # perform maximum scaling here
+        row = row / thr
+        row[row >= 1.] = 1.
+    else:
+        # if no threshold is supplied - minimum is always the value in "quad" - which is already used. basically have to perform maximum scaling now
+        row = row / row.max()
+    
+    # always invert
+    row = 1 - row
+    return row
 
 def empty_scaling(df : pd.DataFrame) -> pd.DataFrame:
     """
