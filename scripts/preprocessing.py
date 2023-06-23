@@ -70,8 +70,12 @@ def apply_scaling(df : pd.DataFrame, df_scale : pd.DataFrame) -> pd.DataFrame:
         mi = df_scale.at[idx, "Min"]
         ma = df_scale.at[idx, "Max"]
         inv = df_scale.at[idx, "Inversion"]
-        quad = df_scale.at[idx, "Optimal"]
-        thr = df_scale.at[idx, "Threshold"]
+        try:
+            quad = df_scale.at[idx, "Optimal"]
+            thr = df_scale.at[idx, "Threshold"]
+        except KeyError:
+            quad = None
+            thr = None
         # Quadratic scaling or linear scaling
         if quad and pd.notna(quad):
             row = apply_quadratic_scaling(row, quad, thr)
