@@ -70,6 +70,9 @@ if __name__ == "__main__":
     else:
         print(df)
 
-
+#TODO: 1) normalize to €/kg (Argpaser)
+#TODO: 2) functional unit g (Argpaser) necessary?
+#TODO: 3) modify input cost table?
+#TODO: 4) how do we operate with two material combinations (PP+Support), (PLA+Support)?
 
 
