@@ -19,11 +19,11 @@
     
 """
 
-from src.ahp.cost_calculation import total_cost, read_sheets
+from ahp.cost_calculation import total_cost, read_sheets
 import pandas as pd
 import os.path
 from argparse import ArgumentParser
-from src.ahp.utils import write_cost_excel
+from ahp.utils import write_cost_excel
 
 def parse_args():
     parser = ArgumentParser(description="File for running a cost calculation. Inputs can be provided over multiple excel files, or as a name-value pair. Use --input for providing excel files as a list (append by using --input <file1> --input <file2>\
@@ -36,7 +36,6 @@ def parse_args():
     parser.add_argument("-s", "--scale", type=float, default=None, help="Weight of recycling mass in kg - to rescale to euros per kg")
     args = parser.parse_args()
     return vars(args)
-
 
 
 # call main function - safeguard for external includes

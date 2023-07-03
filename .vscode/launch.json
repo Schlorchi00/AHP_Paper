@@ -12,11 +12,11 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--input" , "data/process_format/Process_PLA.xlsx",
-                "-s"
-                // "--input" , "data/cost/PP_cost_table.xlsx",
-                // "--name", "PLA_Virgin",
-                // "--value", "100",
+                // "--input" , "data/process_format/Process_PLA.xlsx",
+                // "-s",
+                "--input" , "data/cost/PP_cost_lab.xlsx",
+                "--name", "PLA_Virgin",
+                "--value", "100",
                 // "--output", "data/test_output/cost.xlsx",
                 // "--time"
             ]

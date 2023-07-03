@@ -161,8 +161,15 @@ def cost_position(df : pd.DataFrame, time : bool):
     mc = material_cost(df)
     lc = labour_cost(df)
     mtc = maintenance_cost(df)
-
+    mtc = _isnotna(mtc)
+    mpc = _isnotna(mpc)
+    lc = _isnotna(lc)
+    oc = _isnotna(oc)
+    mc = _isnotna(mc)
     return mpc + oc + mc + lc + mtc
+
+def _isnotna(val):
+    return 0. if np.isnan(val) else val
 
 def total_cost(wbs : dict[pd.DataFrame], time: bool):
     """
