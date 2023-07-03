@@ -33,6 +33,7 @@ def parse_args():
     parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
+    parser.add_argument("-s", "--scale", type=float, default=None, help="Weight of recycling mass in kg - to rescale to euros per kg")
     args = parser.parse_args()
     return vars(args)
 
@@ -58,6 +59,8 @@ if __name__ == "__main__":
 
         # Calculate the total cost
         tot_cost = total_cost(wbs, args["time"])
+        if args["scale"]:
+            tot_cost /= args["scale"]
         # add it to the dictionary
         ns_vs[basename] = tot_cost
 
@@ -70,8 +73,6 @@ if __name__ == "__main__":
     else:
         print(df)
 
-#TODO: 1) normalize to €/kg (Argpaser)
-#TODO: 2) functional unit g (Argpaser) necessary?
 #TODO: 3) modify input cost table?
 #TODO: 4) how do we operate with two material combinations (PP+Support), (PLA+Support)?
 
