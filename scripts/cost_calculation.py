@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
-    parser.add_argument("-s", "--scale", type=float, default=None, help="Weight of recycling mass in kg - to rescale to euros per kg")
+    parser.add_argument("-s", "--scale", type=float, required=True, action="append", help="Weight of recycling mass in kg - to rescale to euros per kg")
     args = parser.parse_args()
     return vars(args)
 
@@ -51,15 +51,19 @@ if __name__ == "__main__":
     assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
     ns_vs = {ns[i] : float(vs[i]) for i in range(len(ns))}
 
+    # scaling values
+    scales = args["scale"]
+    assert len(scales) == len(path_costtable), "Not the correct number of scales given for input files. Check that a scale is given for each input file"
+
     # load data from excel workbook
-    for pth in path_costtable:
+    for i, pth in enumerate(path_costtable):
         basename = os.path.basename(pth).split(".")[0]
         wbs = read_sheets(pth)
 
         # Calculate the total cost
         tot_cost = total_cost(wbs, args["time"])
-        if args["scale"]:
-            tot_cost /= args["scale"]
+        
+        tot_cost /= scales[i]
         # add it to the dictionary
         ns_vs[basename] = tot_cost
 
