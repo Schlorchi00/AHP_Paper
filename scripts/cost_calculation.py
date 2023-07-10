@@ -48,9 +48,12 @@ if __name__ == "__main__":
     print(ns)
     vs = args["value"]
     print(vs)
-    assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
-    ns_vs = {ns[i] : float(vs[i]) for i in range(len(ns))}
-
+    if ns:
+        assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
+        ns_vs = {ns[i] : float(vs[i]) for i in range(len(ns))}
+    else:
+        ns_vs = {}
+        
     # scaling values
     scales = args["scale"]
     assert len(scales) == len(path_costtable), "Not the correct number of scales given for input files. Check that a scale is given for each input file"
