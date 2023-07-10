@@ -24,6 +24,10 @@ import pandas as pd
 import os.path
 from argparse import ArgumentParser
 from ahp.utils import write_cost_excel
+import logging
+import warnings
+
+# logging.getLogger("pandas").setLevel(logging.ERROR)
 
 def parse_args():
     parser = ArgumentParser(description="File for running a cost calculation. Inputs can be provided over multiple excel files, or as a name-value pair. Use --input for providing excel files as a list (append by using --input <file1> --input <file2>\
@@ -45,39 +49,44 @@ if __name__ == "__main__":
     path_costtable = args['input']
 
     ns = args["name"]
-    print(ns)
+    # print(ns)
     vs = args["value"]
-    print(vs)
+    # print(vs)
     if ns:
         assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
         ns_vs = {ns[i] : float(vs[i]) for i in range(len(ns))}
     else:
         ns_vs = {}
-        
+
     # scaling values
     scales = args["scale"]
     assert len(scales) == len(path_costtable), "Not the correct number of scales given for input files. Check that a scale is given for each input file"
 
     # load data from excel workbook
     for i, pth in enumerate(path_costtable):
-        basename = os.path.basename(pth).split(".")[0]
-        wbs = read_sheets(pth)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore')
+            basename = os.path.basename(pth).split(".")[0]
+            wbs = read_sheets(pth)
 
-        # Calculate the total cost
-        tot_cost = total_cost(wbs, args["time"])
-        tot_cost_g = tot_cost / scales[i]
-        print("Material: {}\nTotal Cost: {}\nTotal Cost per g: {}".format(
-            basename, tot_cost, tot_cost_g
-        ))
-        # add it to the dictionary
-        ns_vs[basename] = tot_cost_g
+            # Calculate the total cost
+            tot_cost = total_cost(wbs, args["time"])
+            tot_cost_g = tot_cost / scales[i]
+            logging.info("Material: {}\nTotal Cost: {}\nTotal Cost per g: {}".format(
+                basename, tot_cost, tot_cost_g
+            ))
+            # add it to the dictionary
+            ns_vs[basename] = tot_cost_g
 
     df = pd.Series(ns_vs).to_frame().T
     df.index = ["total_cost_filament"]
 
     if args["output"]:
+        df_scaling = pd.DataFrame(data=pd.NA, index=df.index, columns=["Min", "Max", "Inversion"])
+        logging.warning("Scaling sheet appended. Please correct values before using for preprocessing!")
         with pd.ExcelWriter(args["output"]) as writer:
-            df.to_excel(writer)
+            df.to_excel(writer, sheet_name="economical_params")
+            df_scaling.to_excel(writer, sheet_name="Scaling")
     else:
         print(df)
 
