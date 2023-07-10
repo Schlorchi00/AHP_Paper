@@ -13,10 +13,10 @@
             "justMyCode": true,
             "args": [
                 // "--input" , "data/process_format/Process_PLA.xlsx",
-                "-s", "0.76",
+                "-s", "760",
                 "--input" , "data/cost/PP_cost_lab.xlsx",
                 "--input" , "data/cost/PP_cost_ind.xlsx",
-                "-s", "10.76",
+                "-s", "176",
                 "--name", "PLA_Virgin",
                 "--value", "100",
                 // "--output", "data/test_output/cost.xlsx",

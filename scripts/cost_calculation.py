@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
-    parser.add_argument("-s", "--scale", type=float, required=True, action="append", help="Weight of recycling mass in kg - to rescale to euros per kg")
+    parser.add_argument("-s", "--scale", type=int, required=True, action="append", help="Weight of recycling mass in g - to rescale to euros per g")
     args = parser.parse_args()
     return vars(args)
 
@@ -62,10 +62,12 @@ if __name__ == "__main__":
 
         # Calculate the total cost
         tot_cost = total_cost(wbs, args["time"])
-        
-        tot_cost /= scales[i]
+        tot_cost_g = tot_cost / scales[i]
+        print("Material: {}\nTotal Cost: {}\nTotal Cost per g: {}".format(
+            basename, tot_cost, tot_cost_g
+        ))
         # add it to the dictionary
-        ns_vs[basename] = tot_cost
+        ns_vs[basename] = tot_cost_g
 
     df = pd.Series(ns_vs).to_frame().T
     df.index = ["total_cost_filament"]
