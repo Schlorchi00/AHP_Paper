@@ -314,14 +314,154 @@ def build_base_tree_1():
     #node_A122.add_child(node_A1221)
     #node_A123.add_child(node_A1231)
 
-
-    #Tree Visualization
+    # Tree Visualization
     TreeNode.print_tree(node_A)
 
     # Calculating the tree
     node_A.prepare_tree()
     # ! ensure to always work with values.copy() when using across multiple nodes - otherwise is only a reference!
     node_A.calculate_tree()
+
+def build_base_tree_2():
+    fdir = os.path.dirname(os.path.abspath(__file__))
+    simple_dir_values_mech = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'performance_format')
+    simple_dir_values_proc = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'process_format')
+    simple_dir_values_ecol = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'ecology_format')
+    simple_dir_values_econ = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'cost_format')
+    simple_dir_weights = os.path.join(fdir, '..', 'data', 'test_inputs','weights')
+
+    ##Level 0
+    node_0 = os.path.join(simple_dir_weights, 'weights_0.xlsx')
+
+    ##Level 1
+    node_1_mech = os.path.join(simple_dir_weights, 'weights_1_mech.xlsx')
+    node_1_proc = os.path.join(simple_dir_weights, 'weights_1_proc.xlsx')
+    node_1_ecol = os.path.join(simple_dir_weights, 'weights_1_ecol.xlsx')
+
+    #TODO: Check if values still ok as they are now in one table
+    #PLA
+    node_1_econ = os.path.join(simple_dir_values_econ, 'cost_values_PLA.xlsx')
+    #PP
+    #node_1_econ = os.path.join(simple_dir_values_econ, 'cost_values_PP.xlsx')
+
+    ##Level 2
+    node_2_mech_0 = os.path.join(simple_dir_weights, 'weights_2_mech_0.xlsx')
+    node_2_mech_90 = os.path.join(simple_dir_weights, 'weights_2_mech_90.xlsx')
+
+    #PLA
+    node_2_proc_diam = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
+    node_2_proc_oval = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
+    node_2_proc_mfr = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
+    #PP
+    #node_2_proc_diam = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
+    #node_2_proc_oval = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
+    #node_2_proc_mfr = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
+
+    #PLA
+    node_2_ecol_hh = os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
+    node_2_ecol_eco = os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
+    node_2_ecol_res= os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
+    #PP
+    #node_2_ecol_hh = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
+    #node_2_ecol_eco = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
+    #node_2_ecol_res = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
+
+    ##Level3
+
+    #PLA_0
+    node_3_mech_0_e = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
+    node_3_mech_0_strain = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
+    node_3_mech_0_yield = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
+
+    #PP_0
+    #node_3_mech_0_e = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
+    #node_3_mech_0_strain = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
+    #node_3_mech_0_yield = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
+
+    #PLA_90
+    node_3_mech_90_e = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
+    node_3_mech_90_strain = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
+    node_3_mech_90_yield = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
+
+    #PP_90
+    #node_3_mech_90_e = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
+    #node_3_mech_90_strain = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
+    #node_3_mech_90_yield = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
+
+    # What the function should be called like
+
+    ##Level 0
+    node_0 = TreeNode.from_weights(node_0, name='Meaningfulness_of_Recycling')
+
+    ##Level 1
+    node_1_mech = TreeNode.from_weights(node_1_mech, 'Mechanical_Parameters')
+    node_1_proc = TreeNode.from_weights(node_1_proc, 'Processinfluencing_Parameters')
+    node_1_ecol = TreeNode.from_weights(node_1_ecol, 'Ecological_Parameters')
+
+    node_1_econ = TreeNode.from_values(node_1_econ, 'Economical_Values')
+
+    ##Level 2
+    node_2_mech_0 = TreeNode.from_weights(node_2_mech_0, '0_degree')
+    node_2_mech_90 = TreeNode.from_weights(node_2_mech_90, '90_0_degree')
+
+
+    node_2_proc_diam = TreeNode.from_values(node_2_proc_diam, 'Diameter_values')
+    node_2_proc_oval = TreeNode.from_values(node_2_proc_oval, 'Ovality_values')
+    node_2_proc_mfr = TreeNode.from_values(node_2_proc_mfr, 'MFR_values')
+
+    node_2_ecol_hh = TreeNode.from_values(node_2_ecol_hh, 'Human_Health_values')
+    node_2_ecol_eco = TreeNode.from_values(node_2_ecol_eco, 'Ecosystems_values')
+    node_2_ecol_res = TreeNode.from_values(node_2_ecol_res, 'Resources_values')
+
+    ##Level 3
+
+    node_3_mech_0_e = TreeNode.from_values(node_3_mech_0_e, 'Youngs_modulus_0_values')
+    node_3_mech_0_strain = TreeNode.from_values(node_3_mech_0_strain, 'Tensile_strain_0_values')
+    node_3_mech_0_yield = TreeNode.from_values(node_3_mech_0_yield, 'Yield_strength_0_values')
+
+    node_3_mech_90_e = TreeNode.from_values(node_3_mech_90_e, 'Youngs_modulus_90_values')
+    node_3_mech_90_strain = TreeNode.from_values(node_3_mech_90_strain, 'Tensile_strain_90_values')
+    node_3_mech_90_yield = TreeNode.from_values(node_3_mech_90_yield, 'Yield_strength_90_values')
+
+    # Building the tree structure
+
+    ##Level 1
+    node_0.add_child(node_1_mech)
+    node_0.add_child(node_1_proc)
+    node_0.add_child(node_1_ecol)
+
+    node_0.add_child(node_1_econ)
+
+    ##Level 2
+    node_1_mech.add_child(node_2_mech_0)
+    node_1_mech.add_child(node_2_mech_90)
+
+    node_1_proc.add_child(node_2_proc_diam)
+    node_1_proc.add_child(node_2_proc_oval)
+    node_1_proc.add_child(node_2_proc_mfr)
+
+    node_1_ecol.add_child(node_2_ecol_hh)
+    node_1_ecol.add_child(node_2_ecol_eco)
+    node_1_ecol.add_child(node_2_ecol_res)
+
+
+    ##Level 3
+    node_2_mech_0.add_child(node_3_mech_0_e)
+    node_2_mech_0.add_child(node_3_mech_0_strain)
+    node_2_mech_0.add_child(node_3_mech_0_yield)
+
+    node_2_mech_90.add_child(node_3_mech_90_e)
+    node_2_mech_90.add_child(node_3_mech_90_strain)
+    node_2_mech_90.add_child(node_3_mech_90_yield)
+
+
+    #Tree Visualization
+    TreeNode.print_tree(node_0)
+
+    # Calculating the tree
+    node_0.prepare_tree()
+    # ! ensure to always work with values.copy() when using across multiple nodes - otherwise is only a reference!
+    node_0.calculate_tree()
 
 
 if __name__=="__main__":
