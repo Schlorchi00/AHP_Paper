@@ -3,7 +3,7 @@
 """
 import numpy as np
 import pandas as pd
-from ahp.utils import read_excel
+from src.ahp.utils import read_excel
 
 class AHP:
 

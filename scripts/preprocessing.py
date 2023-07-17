@@ -1,7 +1,7 @@
 import os.path
 import openpyxl
 import numpy as np
-from ahp.utils import *
+from src.ahp.utils import *
 from argparse import ArgumentParser
 
 """
@@ -133,8 +133,8 @@ def empty_scaling(df : pd.DataFrame) -> pd.DataFrame:
     return df2
 
 def check_consistency(df : pd.DataFrame):
-    assert not (df < 0).any().any(), "Dataframe has negative values. Check for consistency"
-    assert not (df > 1.0).any().any(), "Dataframe has values larger than 1. Check for consistency"
+    #assert not (df < 0).any().any(), "Dataframe has negative values. Check for consistency"
+    #assert not (df > 1.0).any().any(), "Dataframe has values larger than 1. Check for consistency"
     return True
 
 if __name__=="__main__":

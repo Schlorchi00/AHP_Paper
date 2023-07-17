@@ -1,4 +1,4 @@
-from ahp.ahp_functions import TreeNode
+from src.ahp.ahp_functions import TreeNode
 from argparse import ArgumentParser
 import os.path
 
@@ -324,10 +324,7 @@ def build_base_tree_1():
 
 def build_base_tree_2():
     fdir = os.path.dirname(os.path.abspath(__file__))
-    simple_dir_values_mech = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'performance_format')
-    simple_dir_values_proc = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'process_format')
-    simple_dir_values_ecol = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'ecology_format')
-    simple_dir_values_econ = os.path.join(fdir, '..', 'data', 'test_inputs','values', 'cost_format')
+    simple_dir_values = os.path.join(fdir, '..', 'data', 'test_inputs','values')
     simple_dir_weights = os.path.join(fdir, '..', 'data', 'test_inputs','weights')
 
     ##Level 0
@@ -340,53 +337,53 @@ def build_base_tree_2():
 
     #TODO: Check if values still ok as they are now in one table
     #PLA
-    node_1_econ = os.path.join(simple_dir_values_econ, 'cost_values_PLA.xlsx')
+    node_1_econ = os.path.join(simple_dir_values, 'total_cost_filament.xlsx')
     #PP
-    #node_1_econ = os.path.join(simple_dir_values_econ, 'cost_values_PP.xlsx')
+    #node_1_econ = os.path.join(simple_dir_values, 'total_cost_filament.xlsx')
 
     ##Level 2
     node_2_mech_0 = os.path.join(simple_dir_weights, 'weights_2_mech_0.xlsx')
     node_2_mech_90 = os.path.join(simple_dir_weights, 'weights_2_mech_90.xlsx')
 
     #PLA
-    node_2_proc_diam = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
-    node_2_proc_oval = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
-    node_2_proc_mfr = os.path.join(simple_dir_values_proc, 'process_values_PLA.xlsx')
+    node_2_proc_diam = os.path.join(simple_dir_values, 'diameter.xlsx')
+    node_2_proc_oval = os.path.join(simple_dir_values, 'ovality.xlsx')
+    node_2_proc_mfr = os.path.join(simple_dir_values, 'MFR.xlsx')
     #PP
-    #node_2_proc_diam = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
-    #node_2_proc_oval = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
-    #node_2_proc_mfr = os.path.join(simple_dir_values_proc, 'process_values_PP.xlsx')
+    #node_2_proc_diam = os.path.join(simple_dir_values, 'diameter.xlsx')
+    #node_2_proc_oval = os.path.join(simple_dir_values, 'ovality.xlsx')
+    #node_2_proc_mfr = os.path.join(simple_dir_values, 'MFR.xlsx')
 
     #PLA
-    node_2_ecol_hh = os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
-    node_2_ecol_eco = os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
-    node_2_ecol_res= os.path.join(simple_dir_values_ecol, 'ecology values_PLA_cuboid.xlsx')
+    node_2_ecol_hh = os.path.join(simple_dir_values, 'human_health.xlsx')
+    node_2_ecol_eco = os.path.join(simple_dir_values, 'ecosystems.xlsx')
+    node_2_ecol_res= os.path.join(simple_dir_values, 'resources.xlsx')
     #PP
-    #node_2_ecol_hh = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
-    #node_2_ecol_eco = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
-    #node_2_ecol_res = os.path.join(simple_dir_values_ecol, 'ecology values_PP_cuboid.xlsx')
+    #node_2_ecol_hh = os.path.join(simple_dir_values, 'human_health.xlsx')
+    #node_2_ecol_eco = os.path.join(simple_dir_values, 'ecosystems.xlsx')
+    #node_2_ecol_res = os.path.join(simple_dir_values, 'resources.xlsx')
 
     ##Level3
 
     #PLA_0
-    node_3_mech_0_e = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
-    node_3_mech_0_strain = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
-    node_3_mech_0_yield = os.path.join(simple_dir_values_mech, 'performance_values_0_PLA.xlsx')
+    node_3_mech_0_e = os.path.join(simple_dir_values, 'e_modulus_0.xlsx')
+    node_3_mech_0_strain = os.path.join(simple_dir_values, 'tensile_strain_at_break_0.xlsx')
+    node_3_mech_0_yield = os.path.join(simple_dir_values, 'tensile_yield_strength_0.xlsx')
 
     #PP_0
-    #node_3_mech_0_e = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
-    #node_3_mech_0_strain = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
-    #node_3_mech_0_yield = os.path.join(simple_dir_values_mech, 'performance_values_0_PP.xlsx')
+    #node_3_mech_0_e = os.path.join(simple_dir_values, 'e_modulus_0.xlsx')
+    #node_3_mech_0_strain = os.path.join(simple_dir_values, 'tensile_strain_at_break_0.xlsx')
+    #node_3_mech_0_yield = os.path.join(simple_dir_values, 'tensile_yield_strength_0.xlsx')
 
     #PLA_90
-    node_3_mech_90_e = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
-    node_3_mech_90_strain = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
-    node_3_mech_90_yield = os.path.join(simple_dir_values_mech, 'performance_values_90_PLA.xlsx')
+    node_3_mech_90_e = os.path.join(simple_dir_values, 'e_modulus_90.xlsx')
+    node_3_mech_90_strain = os.path.join(simple_dir_values, 'tensile_strain_at_break_90.xlsx')
+    node_3_mech_90_yield = os.path.join(simple_dir_values, 'tensile_yield_strength_90.xlsx')
 
     #PP_90
-    #node_3_mech_90_e = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
-    #node_3_mech_90_strain = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
-    #node_3_mech_90_yield = os.path.join(simple_dir_values_mech, 'performance_values_90_PP.xlsx')
+    #node_3_mech_90_e = os.path.join(simple_dir_values_mech, 'e_modulus_90.xlsx')
+    #node_3_mech_90_strain = os.path.join(simple_dir_values_mech, 'tensile_strain_at_break_90.xlsx')
+    #node_3_mech_90_yield = os.path.join(simple_dir_values_mech, 'tensile_yield_strength_90.xlsx')
 
     # What the function should be called like
 
@@ -465,7 +462,7 @@ def build_base_tree_2():
 
 
 if __name__=="__main__":
-    build_base_tree_1()
+    build_base_tree_2()
     # args = parse_args()
     # args = default_args()
     # root = build_AHP_tree()
