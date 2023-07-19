@@ -5,7 +5,7 @@
 ##import libraries
 
 import numpy as np
-from src.ahp.utils import read_excel
+from ahp.utils import read_excel
 import pandas as pd
 # import scipy.sparse.linalg as sc
 
@@ -268,7 +268,7 @@ class TreeNode:
         """
         if not self.is_root():
             raise ValueError("Has to be called on root.")
-        self.__calculate_tree()
+        return self.__calculate_tree()
 
     def __calculate_tree(self):
         """
@@ -281,6 +281,7 @@ class TreeNode:
             child.__calculate_tree()
         if not self.is_leaf():
             self._calculate_values()
+        return "Not sure what to return here"
 
     def _calculate_values(self):
         """
