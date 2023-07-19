@@ -1,4 +1,4 @@
-from src.ahp.ahp_functions import TreeNode
+from ahp.ahp_functions import TreeNode
 from argparse import ArgumentParser
 import os.path
 
@@ -458,7 +458,7 @@ def build_base_tree_2():
     # Calculating the tree
     node_0.prepare_tree()
     # ! ensure to always work with values.copy() when using across multiple nodes - otherwise is only a reference!
-    node_0.calculate_tree()
+    print(node_0.calculate_tree())
 
 
 if __name__=="__main__":

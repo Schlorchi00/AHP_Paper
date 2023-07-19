@@ -3,14 +3,16 @@ import os.path
 
 def read_excel(fpath : str, series : bool = False) -> list:
     # multiple workbooks
-    with open(fpath, 'rb') as f:
+    with pd.ExcelFile(fpath) as f:
         if not series:
             df = pd.read_excel(f, index_col=0)  # sheet_name=None,
+            sheet_name = None
         else:
             df = pd.read_excel(f, index_col=0).squeeze("columns")   #header=None
+            sheet_name = f.sheet_names[0]
         # df_list = [df.parse(sheet) for sheet in df.sheet_names]
     # return df_list
-    return df
+    return df, sheet_name
 
 def write_value_excel(df : pd.DataFrame, output_folder : str):
     """
@@ -21,7 +23,7 @@ def write_value_excel(df : pd.DataFrame, output_folder : str):
         ser = df.loc[vn]
         out_fname = os.path.join(output_folder, vn + ".xlsx")
         with pd.ExcelWriter(out_fname) as writer:
-            ser.to_excel(writer)
+            ser.to_excel(writer, sheet_name=vn)
     print("Written {} files to {}".format(len(df.index.to_list()), output_folder))
 
 def write_cost_excel(df : pd.DataFrame, output_path : str):

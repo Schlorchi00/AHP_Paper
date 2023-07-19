@@ -357,7 +357,7 @@ class TreeNode:
             Should not be used for Leaf Nodes, only for higher levels.
             Will perform integrity check (whether consistency ratio is met)
         """
-        df = read_excel(fpath, series=False)
+        df, _ = read_excel(fpath, series=False)
         nd = cls(name = name, weights=df)
         if not nd.is_consistent():
             raise ValueError("Node is not consistent. Please choose other values")
@@ -366,15 +366,16 @@ class TreeNode:
 
 
     @classmethod
-    def from_values(cls, fpath : str, name : str):
+    def from_values(cls, fpath : str, name : str = None):
         """
             Function to get a TreeNode from a path to an Excel specifying values.
             Stores as a pandas Series.
             Should only be used for Leaf Nodes!
             Will perform integrity check (all **values** between 0 and 1)
         """
-        ser = read_excel(fpath, series=True)
-
+        ser, sheet_name = read_excel(fpath, series=True)
+        if name is None:
+            name = sheet_name
         nd = cls(name = name, values=ser)
 
         return nd

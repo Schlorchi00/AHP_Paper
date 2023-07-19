@@ -1,7 +1,7 @@
 import os.path
 import openpyxl
 import numpy as np
-from src.ahp.utils import *
+from ahp.utils import *
 from argparse import ArgumentParser
 
 """
@@ -42,7 +42,7 @@ def create_df(df_path):
     :return: dataframe
     """
     # reusing previous functions from utils
-    df = read_excel(df_path, False)
+    df, _ = read_excel(df_path, False)
     # returning the sheet name for the node name
     dff = pd.ExcelFile(df_path).sheet_names[0]
     # adding the argument whether scaling is used
