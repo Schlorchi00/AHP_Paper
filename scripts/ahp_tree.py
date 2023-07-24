@@ -461,6 +461,7 @@ def build_base_tree_2():
     # ! ensure to always work with values.copy() when using across multiple nodes - otherwise is only a reference!
     print(node_0.calculate_tree())
     print(node_0.values)
+    print(node_0.scale_values(mode="sum"))
 
 
 if __name__=="__main__":

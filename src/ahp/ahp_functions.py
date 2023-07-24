@@ -5,7 +5,7 @@
 ##import libraries
 
 import numpy as np
-from src.ahp.utils import read_excel
+from ahp.utils import read_excel
 import pandas as pd
 import logging
 # import scipy.sparse.linalg as sc
@@ -288,7 +288,6 @@ class TreeNode:
         if not self.is_leaf():
             self._calculate_values()
             logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
-        return "Not sure what to return here"
 
     def _calculate_values(self):
         """
@@ -296,6 +295,22 @@ class TreeNode:
         """
         self.values = self._inter_df @ self.lam
         logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
+
+    def scale_values(self, mode="sum"):
+        if not self.is_root(): raise ValueError("Only scale the root node")
+        else:
+            return self._scale_values(mode)
+
+    def _scale_values(self, mode="max") -> pd.Series:
+        """
+            Function to scale the value df.
+            Either scale by maximum or by sum
+        """
+        if mode == "max":
+            return self.values / self.values.max()
+        elif mode == "sum":
+            return self.values / self.values.sum()
+        else: raise ValueError("Unknown scale. Use max or sum")
 
     ########################
     # State checking functions
