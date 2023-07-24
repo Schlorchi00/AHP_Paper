@@ -1,7 +1,7 @@
 import os.path
 import openpyxl
 import numpy as np
-from ahp.utils import *
+from src.ahp.utils import *
 from argparse import ArgumentParser
 
 """
