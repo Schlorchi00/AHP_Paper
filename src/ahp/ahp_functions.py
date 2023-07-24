@@ -5,7 +5,7 @@
 ##import libraries
 
 import numpy as np
-from src.ahp.utils import read_excel
+from ahp.utils import read_excel
 import pandas as pd
 import logging
 # import scipy.sparse.linalg as sc
@@ -232,6 +232,7 @@ class TreeNode:
         # set the _inter_df 
         if not self.is_leaf():
             self.fill_values()
+            logging.debug("Fill values debug line")
 
     def __set_lambda(self):
         """
@@ -240,7 +241,6 @@ class TreeNode:
         if self.lam is None:
             lamb = self.priority_vector()
         self.lam = lamb
-        self._lam_is_valid()
 
     def __set_values(self, vals : pd.Series):
         """
@@ -294,7 +294,6 @@ class TreeNode:
         """
             Function to actually calculate the value dataframe.
         """
-        self._is_valid()
         self.values = self._inter_df @ self.lam
         logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
 
@@ -320,13 +319,6 @@ class TreeNode:
         """
         return False if self.parent else True
 
-    def _is_valid(self):
-        assert (np.all(self._inter_df <= 1.)) and (np.all(self._inter_df >= 0.)), "Dataframe for calculation for {} not correct \
-                should be between 0 and 1, is :\n{}".format(self.name, self._inter_df)
-
-    def _lam_is_valid(self):
-        assert np.isclose(self.lam.sum(), 1.), "Lambda of node {} does not sum to one.".format(self.name)
-
     def is_prepared(self):
         """
             function to tell if the node is ready for calculation.
@@ -348,7 +340,26 @@ class TreeNode:
                 1. All nodes that are NOT leaf nodes (e.g. have children) only have weight matrices defined
                 2. ALL nodes that are Leaf nodes (e.g. have no children) have values defined
         """
-        raise NotImplementedError
+        if not self.is_root(): raise ValueError("Should be called on the root node")
+        self._check_integrity()
+
+    def _check_integrity(self):
+        for child in self.children:
+            child._check_integrity()
+        
+        # leaf nodes: check values, other ones: check lambda
+        if self.is_leaf():
+            self._check_values()
+        else:
+            self._check_lambda()
+        
+    def _check_values(self):
+        if not (np.all(self.values <= 1.)) and (np.all(self.values >= 0.)):
+            logging.warning("Dataframe for calculation for {} not correct should be between 0 and 1, is :\n{}".format(self.name, self._inter_df))
+
+    def _check_lambda(self):
+        if not np.isclose(self.lam.sum(), 1.):
+            logging.warning("Lambda of node {} does not sum to one. Values are: {}. Double check weight excel".format(self.name, self.lam))
 
     # functional bottom up traversal
     # def functional_post_order(self, f : function):
