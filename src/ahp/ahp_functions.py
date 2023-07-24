@@ -7,6 +7,7 @@
 import numpy as np
 from ahp.utils import read_excel
 import pandas as pd
+import logging
 # import scipy.sparse.linalg as sc
 
 ########################################################################################################################
@@ -168,7 +169,10 @@ class TreeNode:
         # val,vec = sc.eigs(arr_criteria, k=1, which='LM')
         arr_criteria = self.weights
         val, vec = np.linalg.eig(arr_criteria)
-        return vec[:, np.argmax(val)]
+        mv = vec[:, np.argmax(val)]
+        mvr = mv.real
+        mvn = mvr / np.sum(mvr)
+        return mvn
 
     #normalization I
     def normalize_max(self, arr,rownumber):
@@ -249,13 +253,14 @@ class TreeNode:
 
             # set an intermediate df for the calculation
             self._inter_df = pd.DataFrame(0., columns =[child.name for child in self.children], index = vals.index.to_list())
-            print(self._inter_df)#TODO: Delete
+            logging.debug(self._inter_df) 
+    
     def fill_values(self):
         """
             Inserting the values of the intermediate dataframe
         """
         for child in self.children:
-            print(self._inter_df.loc[:,child.name])
+            logging.debug(self._inter_df.loc[:,child.name])
             self._inter_df.loc[:,child.name] = child.values.copy()
 
 
@@ -288,6 +293,7 @@ class TreeNode:
             Function to actually calculate the value dataframe.
         """
         self.values = self._inter_df @ self.lam
+        logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
 
     ########################
     # State checking functions
