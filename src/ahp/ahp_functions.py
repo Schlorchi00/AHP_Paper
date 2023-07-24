@@ -240,6 +240,7 @@ class TreeNode:
         if self.lam is None:
             lamb = self.priority_vector()
         self.lam = lamb
+        self._lam_is_valid()
 
     def __set_values(self, vals : pd.Series):
         """
@@ -286,12 +287,14 @@ class TreeNode:
             child.__calculate_tree()
         if not self.is_leaf():
             self._calculate_values()
+            logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
         return "Not sure what to return here"
 
     def _calculate_values(self):
         """
             Function to actually calculate the value dataframe.
         """
+        self._is_valid()
         self.values = self._inter_df @ self.lam
         logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
 
@@ -316,6 +319,13 @@ class TreeNode:
             Simple check to see if a Node is the root node
         """
         return False if self.parent else True
+
+    def _is_valid(self):
+        assert (np.all(self._inter_df <= 1.)) and (np.all(self._inter_df >= 0.)), "Dataframe for calculation for {} not correct \
+                should be between 0 and 1, is :\n{}".format(self.name, self._inter_df)
+
+    def _lam_is_valid(self):
+        assert np.isclose(self.lam.sum(), 1.), "Lambda of node {} does not sum to one.".format(self.name)
 
     def is_prepared(self):
         """
