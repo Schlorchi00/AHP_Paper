@@ -1,7 +1,7 @@
 import os.path
 import openpyxl
 import numpy as np
-from src.ahp.utils import *
+from ahp.utils import *
 from argparse import ArgumentParser
 
 """
@@ -77,7 +77,7 @@ def apply_scaling(df : pd.DataFrame, df_scale : pd.DataFrame) -> pd.DataFrame:
             quad = None
             thr = None
         # Quadratic scaling or linear scaling
-        if quad and pd.notna(quad):
+        if pd.notna(quad) and pd.api.types.is_numeric_dtype(quad):
             row = apply_quadratic_scaling(row, quad, thr)
         else:
             row = apply_linear_scaling(row, mi, ma, inv)
