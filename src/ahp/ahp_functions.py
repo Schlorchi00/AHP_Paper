@@ -287,6 +287,8 @@ class TreeNode:
             child.__calculate_tree()
         if not self.is_leaf():
             self._calculate_values()
+            if not self.is_root():
+                self.set_parent_inter_df()
             logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
 
     def _calculate_values(self):
@@ -311,6 +313,13 @@ class TreeNode:
         elif mode == "sum":
             return self.values / self.values.sum()
         else: raise ValueError("Unknown scale. Use max or sum")
+
+    def set_parent_inter_df(self):
+        """
+            Function to set the parent inter_df AFTER the vales have been calculated
+        """
+        self.parent._inter_df[self.name] = self.values
+        logging.debug("Setting the own values into the parent inter_df")
 
     ########################
     # State checking functions
