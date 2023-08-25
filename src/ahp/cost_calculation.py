@@ -127,11 +127,12 @@ def maintenance_cost(df : pd.DataFrame):
         Function to calculate the maintenance cost
     """
     ser = df['maintenance_cost']
+    ser1 = df['labour_cost']
     v1 = ser['cost_spare_parts_[€]'][0]
     v2 = ser['labour_time_[h]'][0]
-    v3 = ser['production_time_[y]'][0]
-    v4 = ser['machine_life_span_[y]'][0]
-    v5 = ser['maintenance_rate_[€/h]'][0]
+    v3 = ser1['labour_rate_[€/h]'][0]
+    v4 = ser['production_time_[y]'][0]
+    v5 = ser['machine_life_span_[y]'][0]
     return _maintenance_cost(v1,  v2, v3, v4, v5)
 
 def _maintenance_cost(v1, v2, v3, v4, v5):
