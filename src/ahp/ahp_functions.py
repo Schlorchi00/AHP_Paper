@@ -8,6 +8,9 @@ import numpy as np
 from ahp.utils import read_excel
 import pandas as pd
 import logging
+import os
+import glob
+
 # import scipy.sparse.linalg as sc
 
 ########################################################################################################################
@@ -430,3 +433,48 @@ class TreeNode:
         nd = cls(name = name, values=ser)
 
         return nd
+
+    @classmethod
+    def tree_from_directory(cls, root_dir : str):
+        """
+            Function to construct a tree directly from a node as root
+            requires: subdirectories that are 
+        """
+        content = os.listdir(root_dir)
+        subdirs = [c for c in content if os.path.isdir(c)]
+        xlsf_l = list(glob.glob("*.xlsx", root_dir=root_dir))
+        assert len(xlsf_l) == 1, "More than 1 xlsx in directory which is classified as weights directory. Double check"
+        xlsf = xlsf_l[0]
+        # create a node from the xlsx in the current directory
+        nd = cls.from_weights(xlsf)
+        for sub in subdirs:
+            # if the subdirs are value directories
+            if not cls._not_value_dir(sub):
+                # read in as list and add to the directory
+                cnls = cls._from_value_dir(sub)
+                for cn in cnls:
+                    nd.add_child(cn)
+            else:
+                # otherwise descend with the subdir
+                cn = cls.tree_from_directory(sub)
+                nd.add_child(cn)
+        assert cls._check_child_names(nd.indices, nd.children_names)      # todo make these properties 
+        return nd
+
+    @classmethod
+    def _not_value_dir(cls, content : list) -> bool:
+        return any(map(os.path.isdir, content))
+
+        
+    @classmethod
+    def _from_value_dir(cls, vdir : str) -> list:
+        """
+            generates a value node from each xlsx in the valuedir and returns it as list
+        """
+        xlsf_l = list(glob.glob("*.xlsx", root_dir=vdir))
+        vl = [cls.from_values(xlsf) for xlsf in xlsf_l]
+        return vl
+
+    @classmethod
+    def _check_child_names(cls, index_ns : list, child_names : list) -> bool:
+        return True if index_ns == child_names else False
