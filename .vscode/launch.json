@@ -12,15 +12,19 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                // "--input" , "data/process_format/Process_PLA.xlsx",
-                "-s", "760",
-                "--input" , "data/cost/PP_cost_lab.xlsx",
-                "--input" , "data/cost/PP_cost_ind.xlsx",
-                "-s", "176",
-                "--name", "PLA_Virgin",
-                "--value", "100",
-                // "--output", "data/test_output/cost.xlsx",
+                // "--input" , "data/test_inputs/preprocessing/process_format/process_values_PLA.xlsx",
+                // "-s", "760",
+                // "--input" , "data/cost/PP_cost_lab.xlsx",
+                // "--input" , "data/cost/PP_cost_ind.xlsx",
+                // "-s", "176",
+                // "--name", "PLA_Virgin",
+                // "--value", "100",
+                // "--output", "data/test_output",
+                // "--weightnames", "0.25",
+                // "--weightinputs", "0.45",
+                // "-wi", "0.3"
                 // "--time"
+                "--input" , "data/input/tree/meaningfulness",
             ]
         }
     ]

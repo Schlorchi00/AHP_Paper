@@ -441,12 +441,13 @@ class TreeNode:
             requires: subdirectories that are 
         """
         content = os.listdir(root_dir)
-        subdirs = [c for c in content if os.path.isdir(c)]
+        subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
         xlsf_l = list(glob.glob("*.xlsx", root_dir=root_dir))
         assert len(xlsf_l) == 1, "More than 1 xlsx in directory which is classified as weights directory. Double check"
-        xlsf = xlsf_l[0]
+        xlsf = os.path.join(root_dir, xlsf_l[0])
         # create a node from the xlsx in the current directory
-        nd = cls.from_weights(xlsf)
+        basename = os.path.basename(root_dir)
+        nd = cls.from_weights(xlsf, basename)
         for sub in subdirs:
             # if the subdirs are value directories
             if not cls._not_value_dir(sub):
