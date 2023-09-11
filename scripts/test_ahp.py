@@ -13,6 +13,7 @@ if __name__=="__main__":
 
     ahp.prepare_tree()
     ahp.check_integrity()
-    print(ahp.calculate_tree())
+    ahp.calculate_tree()
+    print("Final Results: {}".format(ahp.calculate_tree()))
 
     

@@ -10,6 +10,7 @@ import pandas as pd
 import logging
 import os
 import glob
+from pathlib import Path
 
 # import scipy.sparse.linalg as sc
 
@@ -292,7 +293,9 @@ class TreeNode:
             self._calculate_values()
             if not self.is_root():
                 self.set_parent_inter_df()
-            logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
+                logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
+            else:
+                return self.values
 
     def _calculate_values(self):
         """
@@ -441,26 +444,57 @@ class TreeNode:
             requires: subdirectories that are 
         """
         content = os.listdir(root_dir)
-        subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
-        xlsf_l = list(glob.glob("*.xlsx", root_dir=root_dir))
-        assert len(xlsf_l) == 1, "More than 1 xlsx in directory which is classified as weights directory. Double check"
-        xlsf = os.path.join(root_dir, xlsf_l[0])
-        # create a node from the xlsx in the current directory
         basename = os.path.basename(root_dir)
-        nd = cls.from_weights(xlsf, basename)
-        for sub in subdirs:
-            # if the subdirs are value directories
-            if not cls._not_value_dir(sub):
-                # read in as list and add to the directory
-                cnls = cls._from_value_dir(sub)
-                for cn in cnls:
-                    nd.add_child(cn)
-            else:
-                # otherwise descend with the subdir
-                cn = cls.tree_from_directory(sub)
-                nd.add_child(cn)
-        assert cls._check_child_names(nd.indices, nd.children_names)      # todo make these properties 
+        # base case
+        if cls._is_value_dir(root_dir):
+            # create a weight node with the name of the directory
+            xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir)) 
+            w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
+            v_xlsfs = [xf for xf in xlsfs if "weights" not in xf]
+            nd = cls.from_weights(os.path.join(root_dir, w_xlf), basename)
+            for v in v_xlsfs:
+                fpath = os.path.join(root_dir, v)
+                n = Path(fpath).stem
+                cnd = cls.from_values(fpath, n)
+                nd.add_child(cnd)
+        else:
+            subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
+            xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir)) 
+            w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
+            nd = cls.from_weights(os.path.join(root_dir, w_xlf), basename)
+            for sd in subdirs:
+                cnd = cls.tree_from_directory(sd)
+                nd.add_child(cnd)
         return nd
+
+
+        # subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
+        # xlsf = os.path.join(root_dir, w_xlsf)
+        # # create a node from the xlsx in the current directory
+        
+        # nd = cls.from_weights(xlsf, basename)
+        # for sub in subdirs:
+        #     # if the subdirs are value directories
+        #     if not cls._not_value_dir(sub):
+        #         # read in as list and add to the directory
+        #         cnls = cls._from_value_dir(sub)
+        #         for cn in cnls:
+        #             nd.add_child(cn)
+        #     else:
+        #         # otherwise descend with the subdir
+        #         cn = cls.tree_from_directory(sub)
+        #         nd.add_child(cn)
+        # assert cls._check_child_names(nd.indices, nd.children_names)      # todo make these properties 
+        # return nd
+
+    @classmethod
+    def _is_value_dir(cls, root_dir : str):
+        content = os.listdir(root_dir)
+        subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
+        if not subdirs: 
+            return True
+        else:
+            return False
 
     @classmethod
     def _not_value_dir(cls, content : list) -> bool:
