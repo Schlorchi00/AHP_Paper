@@ -58,16 +58,42 @@ class TreeNode:
     def __init__(self, name: str, weights : pd.DataFrame =  None, values : pd.Series = None):
         '''
         Initialization of the hierarchical tree structure
-
-        :param data: any data representing the nodes
         '''
-        self.name = name
-        self.weights = weights
-        self.values = values
-        self.children = []
-        self.parent = None
-        self.lam = None         # Placeholder for the eigenvector
+        self._name = name
+        self._weights = weights
+        self._values = values
+        self._children = []
+        self._parent = None
+        self._lam = None         # Placeholder for the eigenvector
         self._inter_df = None   # Placeholder for intermediate calculations - debugging
+
+    @property
+    def name(self) -> str:
+        return self._name
+    
+    @property
+    def weights(self) -> pd.DataFrame:
+        return self._weights
+    
+    @property
+    def values(self) -> pd.DataFrame:
+        return self._values
+    
+    @property
+    def children(self) -> list:
+        return self._children
+    
+    @property
+    def parent(self):
+        return self._parent
+    
+    @property
+    def lam(self) -> np.ndarray:
+        return self._lam
+    
+    @property
+    def inter_df(self) -> pd.DataFrame:
+        return self._inter_df
 
     def add_child(self, child):
         '''
@@ -76,7 +102,7 @@ class TreeNode:
         :param child: declaration of child
         :return: list of node children regarding a parent
         '''
-        child.parent = self
+        child._parent = self
         self.children.append(child)
 
     def get_level(self):
@@ -244,7 +270,7 @@ class TreeNode:
         """
         if self.lam is None:
             lamb = self.priority_vector()
-        self.lam = lamb
+            self._lam = lamb
 
     def __set_values(self, vals : pd.Series):
         """
@@ -252,7 +278,7 @@ class TreeNode:
         """
         # set the value vector
         if self.values is None:
-            self.values = vals.copy()
+            self._values = vals.copy()
             # 0 the values
             self.values[:] = 0
 
@@ -266,7 +292,7 @@ class TreeNode:
         """
         for child in self.children:
             logging.debug(self._inter_df.loc[:,child.name])
-            self._inter_df.loc[:,child.name] = child.values.copy()
+            self._inter_df[child.name] = child.values.copy()
 
 
     #################################
@@ -301,7 +327,7 @@ class TreeNode:
         """
             Function to actually calculate the value dataframe.
         """
-        self.values = self._inter_df @ self.lam
+        self._values = self._inter_df @ self.lam
         logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
 
     def scale_values(self, mode="sum"):
@@ -466,26 +492,6 @@ class TreeNode:
                 cnd = cls.tree_from_directory(sd)
                 nd.add_child(cnd)
         return nd
-
-
-        # subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
-        # xlsf = os.path.join(root_dir, w_xlsf)
-        # # create a node from the xlsx in the current directory
-        
-        # nd = cls.from_weights(xlsf, basename)
-        # for sub in subdirs:
-        #     # if the subdirs are value directories
-        #     if not cls._not_value_dir(sub):
-        #         # read in as list and add to the directory
-        #         cnls = cls._from_value_dir(sub)
-        #         for cn in cnls:
-        #             nd.add_child(cn)
-        #     else:
-        #         # otherwise descend with the subdir
-        #         cn = cls.tree_from_directory(sub)
-        #         nd.add_child(cn)
-        # assert cls._check_child_names(nd.indices, nd.children_names)      # todo make these properties 
-        # return nd
 
     @classmethod
     def _is_value_dir(cls, root_dir : str):
