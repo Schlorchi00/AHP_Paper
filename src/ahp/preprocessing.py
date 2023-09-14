@@ -19,7 +19,7 @@ def read_domain(subdomain, filename, data = 'data'):
     df_path = os.path.join(datadir,filename)
     return df_path
 
-def create_df(df_path):
+def create_df(df_path) -> tuple[pd.DataFrame, str]:
     """
     modifies a workbook into a suitable dataframe
     :param wb: workbook

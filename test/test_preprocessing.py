@@ -3,8 +3,8 @@ import os.path
 import glob
 import pandas as pd
 
-from ahp.preprocessing import create_df, get_scaling, apply_linear_scaling, apply_scaling, apply_quadratic_scaling, empty_scaling
-
+from ahp.preprocessing import create_df, get_scaling, apply_linear_scaling, apply_scaling, apply_quadratic_scaling, empty_scaling, check_consistency,\
+apply_linear_scaling
 DATADIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'data', 'preprocessing'))
 
 def getfile() -> str:
@@ -39,7 +39,22 @@ def test_linear_scaling():
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
-    scaling = get_scaling()
+    scaling = getscaling()
+    df2 = df.copy(deep=True)
+    # manual application
+    for idx, row in df.iterrows():
+        mi = scaling.at[idx, "Min"]
+        ma = scaling.at[idx, "Max"]
+        inv = scaling.at[idx, "Inversion"]
+        r = apply_linear_scaling(row, mi, ma, inv)
+        df2.loc[idx, :] = r
+    scaling.drop(columns=["Optimal", "Threshold"], inplace=True)
+    df3 = apply_scaling(df, scaling)
+
+    check_consistency(df2)
+    check_consistency(df3)
+    assert df2 == df3, "Linear scaling not functioning correctly. Double check!"
+
 
 def test_quadrat_scaling():
     """
@@ -47,15 +62,16 @@ def test_quadrat_scaling():
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
-    scaling = get_scaling()
+    scaling = getscaling()
 
 def test_empty_scaling():
     """
         Function to test if the empty scaling produces consistent outputs. 
     """
     xlsf = getfile()
-    df, n_name = create_df(xlsf)
-    scaling = get_scaling()
+    df, _ = create_df(xlsf)
+    df2 = empty_scaling(df)
+    check_consistency(df2)
 
 
 def test_scaling_settings_quad():
@@ -64,7 +80,7 @@ def test_scaling_settings_quad():
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
-    scaling = get_scaling()
+    scaling = getscaling()
 
 def test_scaling_settings_lin():
     """
@@ -72,7 +88,7 @@ def test_scaling_settings_lin():
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
-    scaling = get_scaling()
+    scaling = getscaling()
     
     
 
