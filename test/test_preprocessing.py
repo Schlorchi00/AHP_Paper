@@ -58,7 +58,8 @@ def test_linear_scaling():
 
 def test_quadrat_scaling():
     """
-        Function to test if the quadratic scaling procudes consistent outputs. 
+        Function to test if the quadratic scaling procudes consistent outputs.
+        todo - write 
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
@@ -77,6 +78,7 @@ def test_empty_scaling():
 def test_scaling_settings_quad():
     """
         Test if actually the quadratic settings get applied when setting the right places NA
+        todo - write
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
@@ -85,6 +87,7 @@ def test_scaling_settings_quad():
 def test_scaling_settings_lin():
     """
         Test if actually the linear settings get applied when settings the right places NA
+        todo - write
     """
     xlsf = getfile()
     df, n_name = create_df(xlsf)
