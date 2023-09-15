@@ -51,8 +51,8 @@ class TreeNode:
         return self._name
     
     @property
-    def weights(self) -> pd.DataFrame:
-        return self._weights
+    def weights(self) -> pd.DataFrame | None:
+        return self._weights if not self.is_leaf() else None
     
     @property
     def values(self) -> pd.DataFrame:
@@ -292,15 +292,16 @@ class TreeNode:
             self._calculate_values()
             if not self.is_root():
                 self.set_parent_inter_df()
-                logging.debug("Values after calculation for node {} \n{}".format(self.name, self.values))
+                logging.debug("Values after calculation for node {}, child of {} \n{}".format(self.name, self.parent.name, self.values))
             else:
+                logging.debug("Final calculation step for node {}. Please see results after this".format(self.name))
                 return self.values
 
     def _calculate_values(self):
         """
             Function to actually calculate the value dataframe.
         """
-        self._values = self._inter_df @ self.lam
+        self._values = self.inter_df @ self.lam
         logging.debug("Test Debug line for val calculation. Set breakpoint here to inspect value setting")
 
     def scale_values(self, mode="sum"):

@@ -1,5 +1,6 @@
 from ahp.ahp_functions import TreeNode
 from argparse import ArgumentParser
+import logging
 
 def parse_args():
     parser = ArgumentParser(description="File for running an ahp.")
@@ -8,6 +9,8 @@ def parse_args():
     return vars(args)
 
 if __name__=="__main__":
+    logging.getLogger().setLevel(logging.DEBUG)
+
     args = parse_args()
     ahp = TreeNode.tree_from_directory(args["input"])
 
