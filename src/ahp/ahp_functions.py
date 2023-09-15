@@ -10,7 +10,6 @@ import pandas as pd
 import logging
 import os
 import glob
-from pathlib import Path
 
 # import scipy.sparse.linalg as sc
 
@@ -68,12 +67,16 @@ class TreeNode:
         return self._parent
     
     @property
-    def lam(self) -> np.ndarray:
+    def lam(self) -> pd.Series:
         return self._lam
     
     @property
     def inter_df(self) -> pd.DataFrame:
         return self._inter_df
+    
+    @property
+    def weight_idcs(self) -> list:
+        return self.weights.index.to_list() if isinstance(self.weights, pd.DataFrame) else []
 
     def add_child(self, child):
         '''
@@ -171,7 +174,8 @@ class TreeNode:
         mv = vec[:, np.argmax(val)]
         mvr = mv.real
         mvn = mvr / np.sum(mvr)
-        return mvn
+        s = pd.Series(mvn, index=arr_criteria.index)
+        return s
 
     #normalization I
     def normalize_max(self, arr,rownumber):
@@ -445,19 +449,21 @@ class TreeNode:
             # create a weight node with the name of the directory
             xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir)) 
             w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
-            v_xlsfs = [xf for xf in xlsfs if "weights" not in xf]
+            # v_xlsfs = [xf for xf in xlsfs if "weights" not in xf]
             nd = cls.from_weights(os.path.join(root_dir, w_xlf), basename)
-            for v in v_xlsfs:
-                fpath = os.path.join(root_dir, v)
-                n = Path(fpath).stem
-                cnd = cls.from_values(fpath, n)
+            for vn in nd.weight_idcs:
+                fpath = os.path.join(root_dir, vn + ".xlsx")
+                # fpath = os.path.join(root_dir, v)
+                cnd = cls.from_values(fpath, vn)
                 nd.add_child(cnd)
         else:
-            subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
+            # subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
             xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir)) 
             w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
             nd = cls.from_weights(os.path.join(root_dir, w_xlf), basename)
-            for sd in subdirs:
+            for n in nd.weight_idcs:
+                sd = os.path.join(root_dir, n)
+                assert os.path.isdir(sd), "{} not a subdirectory of {}. Names have to correspond!".format(sd, root_dir)
                 cnd = cls.tree_from_directory(sd)
                 nd.add_child(cnd)
         return nd
