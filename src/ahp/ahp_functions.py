@@ -30,28 +30,8 @@ from pathlib import Path
 #tree structure AHP
 class TreeNode:
 
-    """
-        ! Required - AHP matrix -- w -- is necessary for each Node. to be defined
-            * from an array
-            * from an excel file
-        ! TreeNode Data should be 
-        TODO:
-            * [ ] Calculate the tree
-                * [ ] calculate from bottom up
-                * [ ] if a node is calculated, it has a  -- s -- list
-                    * [ ] initialise s als None
-                    * [ ] if s is None - recursively calculate all children
-                        * [ ] all nodes need a flag whether they are calculated -- multiplied s with w
-                        * [ ] Alternatively - the parent may have a flag when all children are ready - define over list? 
 
-                * [ ] Calculate random 2, 3, 4 matrices to fill in as weights for each node
-            * Try with simple easy structure 
-                * 1 top node, 2 children
-                    * per hand nachrechnen - maximal 3 alternatives
-                    * ausschliesslich natuerliche zahlen
-                    * ranges 0 - 1 in 0.1er schritten 
-    """
-
+    # TODO: Source description
     RI = [0,0,0.58,0.90,1.12,1.24,1.32,1.41,1.45,1,49]
     CONSISTENCY_THRESHOLD = 0.1
 
@@ -150,14 +130,6 @@ class TreeNode:
         """
         return len(self.children)
 
-    def __getitem__(self, index):
-        """
-            function to index with []. May have to accept a tuple here
-        """
-        raise NotImplementedError
-
-    def __setitem__(self, index, value):
-        raise NotImplementedError
 
     #consistency check for pairwise comparison matrix of the criteria
     def is_consistent(self):
@@ -184,9 +156,6 @@ class TreeNode:
         """
         return self.weights.shape[0]
 
-        raise NotImplementedError("Not clear when the matrix is deemed consistent. CR has to be what??? Smaller than 1.0?")
-        cr = self.consistency_check()
-        # if cr > 1.0???? what is the number that should be here
 
     #calculation of priority vector
     def priority_vector(self):
