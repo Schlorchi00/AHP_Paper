@@ -52,7 +52,7 @@ class TreeNode:
     
     @property
     def weights(self) -> pd.DataFrame | None:
-        return self._weights if not self.is_leaf() else None
+        return self._weights
     
     @property
     def values(self) -> pd.DataFrame:
@@ -443,7 +443,6 @@ class TreeNode:
             Function to construct a tree directly from a node as root
             requires: subdirectories that are 
         """
-        content = os.listdir(root_dir)
         basename = os.path.basename(root_dir)
         # base case
         if cls._is_value_dir(root_dir):
