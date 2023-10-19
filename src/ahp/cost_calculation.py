@@ -80,7 +80,7 @@ def _operational_cost(val_1, val_2):
 def material_cost(df : pd.DataFrame):
     ser = df['material_cost']
     c1 = ser['production_mass_[kg]'][0]
-    c2 = ser['material_rate_[€/kg]'][0]
+    c2 = ser['material_rate_[€/kg]'][0] #TODO: €/g
     mc = _material_cost(c1 , c2)
     return mc
 
