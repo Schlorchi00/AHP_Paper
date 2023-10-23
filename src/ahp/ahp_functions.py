@@ -10,6 +10,9 @@ import pandas as pd
 import logging
 import os
 import glob
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+import seaborn as sns
 
 # import scipy.sparse.linalg as sc
 
@@ -401,6 +404,33 @@ class TreeNode:
     #     f(self)
     #     for child in self.children:
     #         self.functional_pre_order(child, f)
+
+    # Plotting things:
+    def plot_values(self, **kwargs) -> None:
+        """
+            Function to plot the values as a bar chart
+        """
+        if not self._is_calculated():
+            print("No calculated yet. Please run tree first")
+            return None
+        ax = sns.barplot(self.values, **kwargs)
+        ax.set_title(f"{self.name}")
+        ax.bar_label(ax.containers[0], fontsize=10, fmt='%.3f')
+        plt.show()   
+
+
+    def plot_weights(self, **kwargs) -> None:
+        """
+            Function to plot the weights as a heatmap
+        """
+        if self.is_leaf():
+            print("No weights for leaf node {}".format(self))
+            return None
+        lognorm = LogNorm(vmin = 1. / 9., vmax=9.)
+        ax = sns.heatmap(self.weights, annot=True, mask= self.weights < 1/ 11, linewidths=.5,
+                    norm=lognorm, cbar=None)
+        plt.yticks(rotation=45, ha="right")
+        plt.show()
 
 
     ####################

@@ -10,6 +10,7 @@ def parse_args():
 
 if __name__=="__main__":
     logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger('matplotlib.font_manager').disabled = True
 
     args = parse_args()
     ahp = TreeNode.tree_from_directory(args["input"])
@@ -19,4 +20,7 @@ if __name__=="__main__":
     ahp.calculate_tree()
     print("Final Results:\n{}".format(ahp.calculate_tree()))
 
-    
+    # for c in ahp.children:
+    #     c.plot_values()
+    # ahp.plot_values()
+    ahp.plot_weights()
