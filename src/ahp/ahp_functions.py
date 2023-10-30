@@ -406,7 +406,7 @@ class TreeNode:
     #         self.functional_pre_order(child, f)
 
     # Plotting things:
-    def plot_values(self, **kwargs) -> None:
+    def plot_values(self, path=None, **kwargs) -> None:
         """
             Function to plot the values as a bar chart
         """
@@ -416,10 +416,13 @@ class TreeNode:
         ax = sns.barplot(self.values, **kwargs)
         ax.set_title(f"{self.name}")
         ax.bar_label(ax.containers[0], fontsize=10, fmt='%.3f')
-        plt.show()   
+        if path is None:
+            plt.show()
+        else:
+            plt.savefig(path, dpi=400)
 
 
-    def plot_weights(self, **kwargs) -> None:
+    def plot_weights(self, path = None, **kwargs) -> None:
         """
             Function to plot the weights as a heatmap
         """
@@ -430,7 +433,10 @@ class TreeNode:
         ax = sns.heatmap(self.weights, annot=True, mask= self.weights < 1/ 11, linewidths=.5,
                     norm=lognorm, cbar=None)
         plt.yticks(rotation=45, ha="right")
-        plt.show()
+        if path is None:
+            plt.show()
+        else:
+            plt.savefig(path, dpi=400)
 
 
     ####################
