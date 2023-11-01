@@ -33,8 +33,9 @@ install the package by running `pip install -e .`, see [this source](https://goo
 The cost calculation can be found in the [scripts](./scripts/cost_calculation.py) directory.
 Run from the base directory after activating the environment with:
 ```
-    python scripts/cost_calculation.py -i
+    python scripts/cost_calculation.py -i <file> -s <scale> -n <name> -v <value> OPTIONAL -t -o <output_location>
 ```
+Can be run as a command line utility without changes to the code. Will append a linear scaling sheet, without quadratic options, explained [below](#scaling). 
 Parameters are explained below
 
 ### Parameters
@@ -47,13 +48,34 @@ Parameters are explained below
 * -o, --output: Output location of the file to be written. Defaults to None. If none, will print dataframe for checking to command line.
 * -h, --help: display the help, which will illustrate the parameters 
 
-
-In order to run the program just start the cost_calculation.py, which has to be marked as executable and put in your paths for the dummy data files
-
-```bash
-chmod +x cost_calculation.py
-./cost_calculation.py
+## Preprocessing
+The cost calculation can be found in the [scripts](./scripts/preprocessing.py) directory.
+Run from the base directory after activating the environment with:
 ```
+    python scripts/preprocessing.py -i <input> -s <scaling> -o <output>
+```
+Can be run as a command line utility without changes to the code.
+A scaling sheet is appended to the example file which can be found **path to example file**. Scaling options are explained [below](#scaling).
+Consistency checks will be performed as part of the script.
+Parameters are explained below
+
+### Parameters
+
+* -i, --input: REQUIRED location of the file with the values that have been recorded for each alternative, which will all be leaf nodes. Each line corresponds to a leaf node, measured values, each column to an alternative
+* -o, --output: directory where the leaf nodes will be written to. A leaf node has a value for each of the alternatives. If none given, will print to command line. Defaults to none.
+* -s, --scaling: optional. Will scale the values to be between {0, 1} according to what _optimal_ values are considered to be.
+
+### Scaling
+Scaling values are supplied as a second sheet to the preprocessing excel file. This sheet ensures that recorded measurements for each alternative are scaled between {0,1}
+Possibilities exist for linear or quadratic scaling. If values for quadratic are present in the sheet, quadratic scaling will be applied.
+* Linear scaling
+    * Min: minimum possible value. If None, will use minimum from inputs. E.g. if theoretical minimum for a value is known, supply. 
+    * Max: Maximum possible value. if None, will use maximum from inputs. E.g. if theoretical maximum is known, supply. 
+    * Inversion: if set to 1, low values represent better options. E.g. Lower costs are usually better. 
+* Quadratic scaling
+    * Optimal: if an optimal value can be achieved, use this and quadratic distance between optimal and threshold value (or largest distance) will be used. E.g. printing diameter has an optimal centrepoint 
+    * Threshold: Set a threshold value after which all parameters will be 0. E.g. in case of diameter, +- 5cm from optimal
+
 
 ### Usage with Conda Environment and argument parser
 1. Activate conda environment by typing `conda activate ahp` after running the [install steps](#conda-usage).
