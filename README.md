@@ -1,6 +1,6 @@
-# AHP_Monte_Carlo
+# AHP
 
-Package of scripts to apply an AHP with Monte Carlo simulation. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
+Package of scripts to apply an AHP. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
 
 ![Description of the image of the AHP structure](./docs/cost_model.jpg)
 
@@ -29,6 +29,10 @@ Active environments are denoted by a `(ahp)` preceeding the `user@host:` notatio
 install the package by running `pip install -e .`, see [this source](https://goodresearch.dev/setup.html#pip-install-your-package)
 
 # Script usages
+1. Activate conda environment by typing `conda activate ahp` after running the [install steps](#conda-usage).
+2. navigate to the base directory (`cd <base_directory_of_environment>` - mostly AHP_Paper)
+3. run the script by typing (`python scripts/cost_calculation.py -i <path to the data file>` - path is mostly data/cost/cost_polymers.xlsx)
+
 ## Cost Calculation
 The cost calculation can be found in the [scripts](./scripts/cost_calculation.py) directory.
 Run from the base directory after activating the environment with:
@@ -76,15 +80,18 @@ Possibilities exist for linear or quadratic scaling. If values for quadratic are
     * Optimal: if an optimal value can be achieved, use this and quadratic distance between optimal and threshold value (or largest distance) will be used. E.g. printing diameter has an optimal centrepoint 
     * Threshold: Set a threshold value after which all parameters will be 0. E.g. in case of diameter, +- 5cm from optimal
 
+## Calculating a tree
+Example script is provided [here](./scripts/test_ahp.py)
+The only parameter is an input directory, from which the tree structure will be set up. The script runs four steps including consistency checks
 
-### Usage with Conda Environment and argument parser
-1. Activate conda environment by typing `conda activate ahp` after running the [install steps](#conda-usage).
-2. navigate to the base directory (`cd <base_directory_of_environment>` - mostly AHP_Paper)
-3. run the script by typing (`python scripts/cost_calculation.py -i <path to the data file>` - path is mostly data/cost/cost_polymers.xlsx)
+1. Reading a tree from a directory structure. This checks for directory and spreadsheet naming conventions 
+2. Preparing a tree from the structure provided in the previous steps
+3. Checking the integrity of values and weights
+4. Calculating the final decision support tree
 
-## Description
+The final result will be printed to the command line. 
+Changes can be made in the script after the calculation. Weights and values can be plotted or printed through node convenience methods, see [example](/src/ahp/ahp_functions.py#L409) 
 
-The program reads an excel table, where the practitioner had to measure all the relevant cost parameters and protocol it. The file calculates the cost positions based on the excel file
+### Parameters
 
-## Issues
-[ ] Nico - cannot run `cost_calculation.py` - statement wb `shredding` does not exist in [excel file](./data/cost/cost_polymers.xlsx)
+* --input, -i: base directory for a tree setup. The tree should be structured 
