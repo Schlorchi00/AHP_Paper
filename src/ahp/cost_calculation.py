@@ -28,6 +28,7 @@ def mach_purch_cost(df : pd.DataFrame):
     # todo: Changed into machine_life_span
     v3 = ser['machine_life_span_[y]'][0]
     mach_Pc = _mach_purch_cost(v1, v2, v3)
+
     return mach_Pc
 
 def _mach_purch_cost(v1: int, v2 : int, v3 : int):
@@ -53,6 +54,8 @@ def operational_cost(df : pd.DataFrame, time : bool):
     else:
         val_1 = ser['production_energy_[kWh]'][0]
         val_2 = ser['operational_rate_energy_[€/kWh]'][0]
+
+
     return _operational_cost(val_1, val_2)
 
 def _operational_cost(val_1, val_2):
@@ -105,13 +108,15 @@ def labour_cost(df : pd.DataFrame):
     v2 = ser['process_[h]'][0]
     v3 = ser['postprocess_[h]'][0]
     v4 = ser['labour_rate_[€/h]'][0]
+
+
     return _labour_cost(v1, v2, v3, v4)
 
 def _labour_cost(v1, v2, v3, v4):
     """
         calculation of labour cost
     """
-    return (v1 + v2 + v3) / v4
+    return (v1 + v2 + v3) * v4
 
 # def labour_cost(df_process):
 #     """
@@ -133,6 +138,7 @@ def maintenance_cost(df : pd.DataFrame):
     v3 = ser1['labour_rate_[€/h]'][0]
     v4 = ser['production_time_[y]'][0]
     v5 = ser['machine_life_span_[y]'][0]
+
     return _maintenance_cost(v1,  v2, v3, v4, v5)
 
 def _maintenance_cost(v1, v2, v3, v4, v5):
@@ -167,6 +173,7 @@ def cost_position(df : pd.DataFrame, time : bool):
     lc = _isnotna(lc)
     oc = _isnotna(oc)
     mc = _isnotna(mc)
+
     return mpc + oc + mc + lc + mtc
 
 def _isnotna(val):
