@@ -495,7 +495,12 @@ class TreeNode:
             for vn in nd.weight_idcs:
                 fpath = os.path.join(root_dir, vn + ".xlsx")
                 # fpath = os.path.join(root_dir, v)
-                cnd = cls.from_values(fpath, vn)
+                try:
+                    cnd = cls.from_values(fpath, vn)
+                except FileNotFoundError:
+                    raise FileNotFoundError("File {} not found.\nLooking for values for: {}\nFiles available:{}".format(
+                        fpath, nd.weight_idcs, xlsfs
+                    ))
                 nd.add_child(cnd)
         else:
             # subdirs = [os.path.join(root_dir, c) for c in content if os.path.isdir(os.path.join(root_dir, c))]
