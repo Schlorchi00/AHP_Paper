@@ -483,8 +483,13 @@ class TreeNode:
         # base case
         if cls._is_value_dir(root_dir):
             # create a weight node with the name of the directory
-            xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir)) 
-            w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
+            xlsfs = list(glob.glob("*.xlsx", root_dir=root_dir))
+            try:
+                w_xlf = list([xf for xf in xlsfs if "weights" in xf])[0]
+            except IndexError as e:
+                raise IndexError("No weights file found in directory: {}\nonly found files: {}".format(
+                        basename, xlsfs
+                ))
             # v_xlsfs = [xf for xf in xlsfs if "weights" not in xf]
             nd = cls.from_weights(os.path.join(root_dir, w_xlf), basename)
             for vn in nd.weight_idcs:
