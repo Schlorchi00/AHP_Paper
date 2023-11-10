@@ -293,6 +293,7 @@ class TreeNode:
             child.__calculate_tree()
         if not self.is_leaf():
             self._calculate_values()
+            self._check_na()
             if not self.is_root():
                 self.set_parent_inter_df()
                 logging.debug("Values after calculation for node {}, child of {} \n{}".format(self.name, self.parent.name, self.values))
@@ -389,6 +390,10 @@ class TreeNode:
     def _check_values(self):
         if not (np.all(self.values <= 1.)) and (np.all(self.values >= 0.)):
             logging.warning("Dataframe for calculation for {} not correct should be between 0 and 1, is :\n{}".format(self.name, self._inter_df))
+
+    def _check_na(self):
+        if self.values.isnull().values.any():
+            raise TypeError("Some values are Nan. Check naming conventions of children of {}:\n{}".format(self.name, self.values))
 
     def _check_lambda(self):
         if not np.isclose(self.lam.sum(), 1.):
