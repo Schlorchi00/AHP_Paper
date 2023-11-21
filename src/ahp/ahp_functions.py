@@ -421,6 +421,8 @@ class TreeNode:
         ax = sns.barplot(self.values, **kwargs)
         ax.set_title(f"{self.name}")
         ax.bar_label(ax.containers[0], fontsize=10, fmt='%.3f')
+        ax.set_title(self.name)
+
         if path is None:
             plt.show()
         else:
@@ -438,6 +440,7 @@ class TreeNode:
         ax = sns.heatmap(self.weights, annot=True, mask= self.weights < 1/ 11, linewidths=.5,
                     norm=lognorm, cbar=None)
         plt.yticks(rotation=45, ha="right")
+        ax.set_title(self.name)
         if path is None:
             plt.show()
         else:
