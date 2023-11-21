@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     parser.add_argument("-t", "--time", help="Whether to use time or energy for operational cost calculation. Defaults to energy.", action="store_true")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
-    parser.add_argument("-s", "--scale", type=int, required=True, action="append", help="Weight of recycling mass in g - to rescale to euros per g")
+    parser.add_argument("-s", "--scale", type=int, required=True, action="append", help="Weight of recycling mass in g - to rescale to euros per g. Round to nearest integer")
     args = parser.parse_args()
     return vars(args)
 
