@@ -24,3 +24,4 @@ if __name__=="__main__":
     #     c.plot_values()
     # ahp.plot_values()
     ahp.plot_weights()
+    ahp.save_values("test_output.xlsx")

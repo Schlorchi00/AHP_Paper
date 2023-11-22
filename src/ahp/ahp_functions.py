@@ -446,6 +446,12 @@ class TreeNode:
         else:
             plt.savefig(path, dpi=400)
 
+    # Saving functions
+    def save_values(self, outpath : str) -> None:
+        with pd.ExcelWriter(outpath) as writer:
+            self.values.to_excel(writer, sheet_name="values")
+        logging.info("Saved values for {} to {}".format(self.name, outpath))
+
 
     ####################
     # Outer Init Methods
