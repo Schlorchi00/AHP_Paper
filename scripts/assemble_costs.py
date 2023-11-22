@@ -18,7 +18,8 @@ def parse_args():
                             Will use the filename for the name of the material. Standard materials can be appended through the name - value pairing")
     parser.add_argument("-i", "--input", type=str,  required=True, action="append", help="Locations of the excel files. Accepts multiple arguments. Will use the filename for the name of the material")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output location of the file. If None given, will write to terminal")
-    
+    parser.add_argument("-n", "--name", action="append", help="Name of a material - will be used in output file. Caution - keep order!")
+    parser.add_argument("-v", "--value", action="append", help="Value of material - will be used in output file. Caution - keep order!")
     args = parser.parse_args()
     return vars(args)
 
@@ -26,7 +27,7 @@ def parse_args():
 if __name__ == "__main__":
     args=parse_args()
 
-    # set paths
+    # read in files
     path_costtable = args['input']
     sd = {}
     for pth in path_costtable:
@@ -35,6 +36,15 @@ if __name__ == "__main__":
             df_dict = pd.read_excel(f,sheet_name="economical_params", header=0, index_col=0)
         val = df_dict["cost_weighted"]["sum"]
         sd[basename] = val
+
+    # read in name - value pairs
+    ns = args["name"]
+    vs = args["value"]
+    if ns:
+        assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
+        for i, n in enumerate(ns):
+            sd[n] = float(vs[i])
+
     df = pd.DataFrame.from_dict(data=sd, orient="index", columns=["total_cost_filament"]).T
 
     if args["output"]:
