@@ -452,6 +452,12 @@ class TreeNode:
             self.values.to_excel(writer, sheet_name="values")
         logging.info("Saved values for {} to {}".format(self.name, outpath))
 
+    def save_lambda(self, outpath : str) -> None:
+        with pd.ExcelWriter(outpath) as writer:
+            self.lam.to_excel(writer, sheet_name="eigenvalues")
+        logging.info("Saved eigenvalues for {} to {}".format(self.name, outpath))
+
+
 
     ####################
     # Outer Init Methods
