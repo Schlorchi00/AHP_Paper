@@ -5,7 +5,7 @@
 ##import libraries
 
 import numpy as np
-from ahp.utils import read_excel
+from src.ahp.utils import read_excel
 import pandas as pd
 import logging
 import os

@@ -19,14 +19,15 @@
     
 """
 
-from ahp.cost_calculation import total_cost, read_sheets
+from src.ahp.cost_calculation import total_cost, read_sheets
 import itertools
 import pandas as pd
 import os.path
 from argparse import ArgumentParser
-from ahp.utils import write_cost_excel
+from src.ahp.utils import write_cost_excel
 import logging
 import warnings
+
 
 # logging.getLogger("pandas").setLevel(logging.ERROR)
 
@@ -110,8 +111,13 @@ if __name__ == "__main__":
     df = pd.DataFrame.from_dict(d, orient="index")
     df.loc["sum", :] = df.sum(axis=0)
     if args["output"]:
-        with pd.ExcelWriter(args["output"]) as writer:
+        output_folder = args["output"]
+        assert os.path.isdir( output_folder), "{} not a directory. needs to be a directory for files to be written".format(output_folder)
+        out_fname = os.path.join(output_folder, df.index[1] + ".xlsx")
+
+        with pd.ExcelWriter(out_fname, engine='openpyxl') as writer:
             df.to_excel(writer, sheet_name="economical_params")
         logging.info("Written sheet to: {}".format(args["output"]))
+
     else:
         print(df)
