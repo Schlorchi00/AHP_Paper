@@ -113,11 +113,21 @@ if __name__ == "__main__":
     if args["output"]:
         output_folder = args["output"]
         assert os.path.isdir( output_folder), "{} not a directory. needs to be a directory for files to be written".format(output_folder)
-        out_fname = os.path.join(output_folder, df.index[1] + ".xlsx")
 
-        with pd.ExcelWriter(out_fname, engine='openpyxl') as writer:
-            df.to_excel(writer, sheet_name="economical_params")
-        logging.info("Written sheet to: {}".format(args["output"]))
+        if os.path.isfile(output_folder + df.index[1] +".xlsx") == True:
+            out_fname = os.path.join(output_folder + df.index[1]+ '_1' + ".xlsx")
+
+            with pd.ExcelWriter(out_fname, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name="economical_params")
+            logging.info("Written sheet to: {}".format(args["output"]))
+
+        else:
+            out_fname = os.path.join(output_folder, df.index[1] + ".xlsx")
+
+            with pd.ExcelWriter(out_fname, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name="economical_params")
+            logging.info("Written sheet to: {}".format(args["output"]))
+
 
     else:
         print(df)
