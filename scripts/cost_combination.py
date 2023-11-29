@@ -59,20 +59,26 @@ if __name__ == "__main__":
 
     ns = args["name"]
     # print(ns)
+
     vs = args["value"]
-    vs = _to_float(vs)
+    vs = _to_float(vs) if vs else vs
+
     wsn = args["weightnames"]
-    
-    wsn = _to_float(wsn) if wsn else wsn 
+    wsn = _to_float(wsn) if wsn else wsn
     wsi = args["weightinputs"]
     wsi = _to_float(wsi) if wsi else wsi
+
     assert abs(sum(comb_list(wsi, wsn)) - 1.) <= 0.001, "Weights do not sum to 1, sum to : {}. Double Check".format(sum(wsn + wsi))
-    assert len(wsn) == len(ns) , "Weights are {} items, names are: {}. Have to be the same length".format(len(wsn), len(ns))
+
+    if None not in (wsn, ns):
+        assert len(wsn) == len(ns) , "Weights are {} items, names are: {}. Have to be the same length".format(len(wsn), len(ns))
+
     if path_costtable:
         assert len(wsi) == len(path_costtable), "Weights are {} items, input files are: {}. Have to be the same length".format(len(wsn), len(path_costtable))
     # print(vs)
     # df = pd.DataFrame(columns=["cost_per_gram" ,"weight", "cost_weighted"])
     d = {}
+
     if ns:
         assert len(ns) == len(vs), "Not the correct number of values provided for names. Check if number coincides"
         for i, n in enumerate(ns):
@@ -88,6 +94,7 @@ if __name__ == "__main__":
         assert len(scales) == len(path_costtable), "Not the correct number of scales given for input files. Check that a scale is given for each input file"
 
     # load data from excel workbook
+
     if path_costtable:
         for i, pth in enumerate(path_costtable):
             with warnings.catch_warnings():
