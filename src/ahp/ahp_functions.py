@@ -5,7 +5,7 @@
 ##import libraries
 
 import numpy as np
-from src.ahp.utils import read_excel
+from ahp.utils import read_excel
 import pandas as pd
 import logging
 import os
@@ -445,6 +445,16 @@ class TreeNode:
             plt.show()
         else:
             plt.savefig(path, dpi=400)
+
+    def plot_weights_tree(self):
+        '''
+            Plotting all weights of the tree. has to be called on root
+        '''
+        for child in self.children:
+            child.plot_weights_tree()
+        if not self.is_leaf():
+            self.plot_weights()
+        
 
     # Saving functions
     def save_values(self, outpath : str) -> None:

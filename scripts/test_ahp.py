@@ -23,6 +23,7 @@ if __name__=="__main__":
     # for c in ahp.children:
     #     c.plot_values()
     # ahp.plot_values()
-    ahp.plot_weights()
+    ahp.plot_weights_tree()
+
     ahp.save_values("test_output.xlsx")
     ahp.save_lambda("test_lambda.xlsx")
