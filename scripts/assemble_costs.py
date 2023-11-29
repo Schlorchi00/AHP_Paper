@@ -2,12 +2,12 @@
     Script to assemble the costs from multiple data
 """
 
-from ahp.cost_calculation import total_cost, read_sheets
+from src.ahp.cost_calculation import total_cost, read_sheets
 import itertools
 import pandas as pd
 import os.path
 from argparse import ArgumentParser
-from ahp.utils import write_cost_excel
+from src.ahp.utils import write_cost_excel
 import logging
 import warnings
 
@@ -48,9 +48,11 @@ if __name__ == "__main__":
     df = pd.DataFrame.from_dict(data=sd, orient="index", columns=["total_cost_filament"]).T
 
     if args["output"]:
+        output_folder = args["output"]
+        out_fname = os.path.join(output_folder + df.index[0] + ".xlsx")
         df_scaling = pd.DataFrame(data=pd.NA, index=df.index, columns=["Min", "Max", "Inversion"])
         logging.warning("Scaling sheet appended to {}. Please correct values before using for preprocessing!".format(args["output"]))
-        with pd.ExcelWriter(args["output"]) as writer:
+        with pd.ExcelWriter(out_fname, engine = 'openpyxl') as writer:
             df.to_excel(writer, sheet_name="economical_params")
             df_scaling.to_excel(writer, sheet_name="Scaling")
     else:
