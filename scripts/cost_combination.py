@@ -61,17 +61,15 @@ if __name__ == "__main__":
     # print(ns)
 
     vs = args["value"]
-    vs = _to_float(vs) if vs else vs
+    vs = _to_float(vs) if vs else []
 
     wsn = args["weightnames"]
-    wsn = _to_float(wsn) if wsn else wsn
+    wsn = _to_float(wsn) if wsn else []
     wsi = args["weightinputs"]
-    wsi = _to_float(wsi) if wsi else wsi
+    wsi = _to_float(wsi) if wsi else []
 
     assert abs(sum(comb_list(wsi, wsn)) - 1.) <= 0.001, "Weights do not sum to 1, sum to : {}. Double Check".format(sum(wsn + wsi))
-
-    if None not in (wsn, ns):
-        assert len(wsn) == len(ns) , "Weights are {} items, names are: {}. Have to be the same length".format(len(wsn), len(ns))
+    assert len(wsn) == len(ns) , "Weights are {} items, names are: {}. Have to be the same length".format(len(wsn), len(ns))
 
     if path_costtable:
         assert len(wsi) == len(path_costtable), "Weights are {} items, input files are: {}. Have to be the same length".format(len(wsn), len(path_costtable))
