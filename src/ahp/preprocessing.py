@@ -2,7 +2,7 @@ import os.path
 import numpy as np
 import pandas as pd
 
-from src.ahp.utils import read_excel
+from ahp.utils import read_excel
 
 
 def read_domain(subdomain, filename, data = 'data'):
@@ -78,10 +78,10 @@ def apply_linear_scaling(row, mi, ma, inv):
             * maximum
             * inversion
     """
-    if pd.notna(mi):
-        row = row - mi
-    else:
-        row = row - row.min()
+    if not pd.notna(mi):
+        mi = row.min()        
+    row = row - mi
+    ma -= mi
     if pd.notna(ma):
         row = row / ma
     else:

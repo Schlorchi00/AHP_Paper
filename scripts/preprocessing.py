@@ -1,7 +1,7 @@
 
 from argparse import ArgumentParser
-from src.ahp.preprocessing import *
-from src.ahp.utils import write_value_excel
+from ahp.preprocessing import *
+from ahp.utils import write_value_excel
 
 """
     Usage:
