@@ -79,7 +79,7 @@ if __name__ == "__main__":
             ns_vs[basename] = tot_cost_g
 
     df = pd.Series(ns_vs).to_frame().T
-    df.index = ["total_cost_filament"]
+    df.index = ["economical"]
 
     if args["output"]:
         df_scaling = pd.DataFrame(data=pd.NA, index=df.index, columns=["Min", "Max", "Inversion"])

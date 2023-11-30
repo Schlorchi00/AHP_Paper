@@ -45,7 +45,7 @@ if __name__ == "__main__":
         for i, n in enumerate(ns):
             sd[n] = float(vs[i])
 
-    df = pd.DataFrame.from_dict(data=sd, orient="index", columns=["total_cost_filament"]).T
+    df = pd.DataFrame.from_dict(data=sd, orient="index", columns=["economical"]).T
 
     if args["output"]:
         output_folder = args["output"]
