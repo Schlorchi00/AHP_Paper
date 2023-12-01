@@ -7,7 +7,7 @@ import itertools
 import pandas as pd
 import os.path
 from argparse import ArgumentParser
-from src.ahp.utils import write_cost_excel
+from src.ahp.utils import write_cost_excel, uniquify
 import logging
 import warnings
 
@@ -50,6 +50,7 @@ if __name__ == "__main__":
     if args["output"]:
         output_folder = args["output"]
         out_fname = os.path.join(output_folder + df.index[0] + ".xlsx")
+        out_fname = uniquify(out_fname)
         df_scaling = pd.DataFrame(data=pd.NA, index=df.index, columns=["Min", "Max", "Inversion"])
         logging.warning("Scaling sheet appended to {}. Please correct values before using for preprocessing!".format(args["output"]))
         with pd.ExcelWriter(out_fname, engine = 'openpyxl') as writer:

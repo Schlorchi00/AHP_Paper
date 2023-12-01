@@ -1,6 +1,20 @@
 import pandas as pd
 import os.path
 
+def uniquify(path : str) -> str:
+    """
+        Function to turn a path into a unique path if it already exists
+    """
+    filen, ext = os.path.splitext(path)
+    counter = 1
+    # addstr = "youalmostdeletedyourdatayoudummy"
+    while os.path.exists(path):
+        path = filen + "(" + str(counter) + ")" + ext
+        counter +=1 
+    
+    return path
+
+
 def read_excel(fpath : str, series : bool = False) -> list:
     # multiple workbooks
     with pd.ExcelFile(fpath) as f:
