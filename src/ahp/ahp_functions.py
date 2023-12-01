@@ -436,11 +436,18 @@ class TreeNode:
         if self.is_leaf():
             print("No weights for leaf node {}".format(self))
             return None
+        plt.figure(figsize=(15,15))
+        sns.set(font_scale=3.8)
         lognorm = LogNorm(vmin = 1. / 9., vmax=9.)
+        annot_kws = {
+            "fontweight" : "bold",
+            "fontsize" : "xx-large"
+            }
         ax = sns.heatmap(self.weights, annot=True, mask= self.weights < 1/ 11, linewidths=.5,
-                    norm=lognorm, cbar=None)
-        plt.yticks(rotation=45, ha="right")
-        ax.set_title(self.name)
+                    norm=lognorm, cbar=None, annot_kws=annot_kws).set(title=self.name)               # center=1.
+        plt.yticks(rotation=30, ha="right")
+        plt.xticks(rotation=30, ha="center")
+        # plt.tight_layout()
         if path is None:
             plt.show()
         else:
