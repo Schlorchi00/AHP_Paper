@@ -82,12 +82,13 @@ def apply_linear_scaling(row, mi, ma, inv):
         mi = row.min()        
     row = row - mi
     ma -= mi
-    if pd.notna(ma):
-        row = row / ma
-    else:
-        row = row / row.max()
+
+    if not pd.notna(ma):
+        ma = row.max()
+    row = row / ma
+
     if inv and pd.notna(inv):
-        row = 1 - row
+        row = 1. - row
     return row
 
 def apply_quadratic_scaling(row, quad, thr):
