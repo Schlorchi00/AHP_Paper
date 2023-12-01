@@ -19,11 +19,11 @@
     
 """
 
-from src.ahp.cost_calculation import total_cost, read_sheets
+from ahp.cost_calculation import total_cost, read_sheets
 import pandas as pd
 import os.path
 from argparse import ArgumentParser
-from src.ahp.utils import write_cost_excel
+from ahp.utils import write_cost_excel
 import logging
 import warnings
 
@@ -82,11 +82,14 @@ if __name__ == "__main__":
     df.index = ["economical"]
 
     if args["output"]:
+        if os.path.isdir(args["output"]):
+            raise FileExistsError("{} is a directory. needs to be a file.".format(args["output"]))
         df_scaling = pd.DataFrame(data=pd.NA, index=df.index, columns=["Min", "Max", "Inversion"])
         logging.warning("Scaling sheet appended. Please correct values before using for preprocessing!")
         with pd.ExcelWriter(args["output"]) as writer:
             df.to_excel(writer, sheet_name="economical")
             df_scaling.to_excel(writer, sheet_name="Scaling")
+        logging.info("Written dataframe: {}\nto location:{}".format(df,args["output"]))
     else:
         print(df)
 
