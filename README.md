@@ -1,37 +1,31 @@
 # AHP
 
-Package of scripts to apply an AHP. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
+Package to apply an AHP. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
 
 ![Description of the image of the AHP structure](./docs/cost_model.jpg)
 
-## Installation
+# Installation
+The programing structure of the code provided in this repository follows the [Good Research Code Practices](https://goodresearch.dev/) - Thanks [@PatrickMineault](https://github.com/patrickmineault/).
+The scripts provided as part of this package have inside and outside dependences. Next to local files, residing in [src](./src/), which **have to be [pip installed](#pip-installation)**, outside dependencies are required for running scripts. These can be easily installed via either [conda](#conda) or [pip](#pip).   
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install openpyxl.
+## Conda
+Install `miniconda` according to the official instructions [here](https://docs.conda.io/projects/miniconda/en/latest/).
+Create an environment through the provided [environment.yml](./environment.yml) file by running `conda env create -f environment.yml`
+Ensure that pip is installed inside the local package (can be validated through executing `python`, `import pip`, `pip.__file__` and checking it is inside the environment path).
 
-```bash
-pip3 install openpyxl
-```
+## Pip
+Installing dependences through pip can be done through running `pip install -r requirements.txt`, where [requirements.txt](./requirements.txt) contains a pip list of all necessary dependencies.
 
-Clone this repository onto your local machine.
+## Pip Installation
+Install local files residing in [src](./src/) through `pip install -e .`, which will pip install these as editable files. These can then be imported as normal packages, defined in [setup.py](./setup.py), p.ex. executing `python` and `from ahp.utils import *`. 
 
-```bash
-git clone https://github.com/Schlorchi00/AHP_Paper.git
-```
-
-### Conda usage
-install environment `ahp` by typing `conda env create --file ahp_env.txt` or `conda en create --file ahp_env.yml` on Mac.
-Dump environments by running `conda env export --no-builds > ahp_env.yml`
-activate environments by running `conda activate ahp`
-Active environments are denoted by a `(ahp)` preceeding the `user@host:` notation
-
-### Pip installation
-**Within the activated conda environment** (`conda activate ahp`)
-install the package by running `pip install -e .`, see [this source](https://goodresearch.dev/setup.html#pip-install-your-package)
-
-# Script usages
-1. Activate conda environment by typing `conda activate ahp` after running the [install steps](#conda-usage).
-2. navigate to the base directory (`cd <base_directory_of_environment>` - mostly AHP_Paper)
-3. run the script by typing (`python scripts/cost_calculation.py -i <path to the data file>` - path is mostly data/cost/cost_polymers.xlsx)
+# Scripts usages
+The package provides four main scripts for three processes of the AHP as defined in this usage:
+1. The [cost calculation step](#cost-calculation). This is separated into two scripts:
+    * [`cost_calculation.py`](./scripts/cost_calculation.py) - for calculating the costs of a single material using a predefined spreadsheet structure 
+    * [`cost_combination.py`](./scripts/cost_combination.py) - for combining the costs of multiple materials 
+2. The [preprocessing step](#preprocessing) - which prepares the provided files such that these can be used by the AHP process. Implemented in the file [`preprocessing.py`](./scripts/preprocessing.py)
+3. The [Tree calculation](#calculating-a-tree), which is the final step and implemented in [`test_ahp.py`](./scripts/test_ahp.py)
 
 ## Cost Calculation
 The cost calculation can be found in the [scripts](./scripts/cost_calculation.py) directory.
@@ -94,4 +88,4 @@ Changes can be made in the script after the calculation. Weights and values can 
 
 ### Parameters
 
-* --input, -i: base directory for a tree setup. The tree should be structured 
+* --input, -i: base directory for a tree setup. The tree should be structured prior to running the calculation. Will provide error checks
