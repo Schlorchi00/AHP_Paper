@@ -4,6 +4,9 @@ Package to apply an AHP. Project files [in the google drive folder](https://driv
 
 ![Description of the image of the AHP structure](./docs/cost_model.jpg)
 
+## Preview of the AHP process used in this research
+![Image of the AHP Process used in this research](./docs/testview.svg)
+
 # Installation
 The programing structure of the code provided in this repository follows the [Good Research Code Practices](https://goodresearch.dev/) - Thanks [@PatrickMineault](https://github.com/patrickmineault/).
 The scripts provided as part of this package have inside and outside dependences. Next to local files, residing in [src](./src/), which **have to be [pip installed](#pip-installation)**, outside dependencies are required for running scripts. These can be easily installed via either [conda](#conda) or [pip](#pip).   
