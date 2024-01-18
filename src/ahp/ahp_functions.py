@@ -13,6 +13,7 @@ import glob
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import seaborn as sns
+from graphviz import Digraph
 
 # import scipy.sparse.linalg as sc
 
@@ -474,7 +475,49 @@ class TreeNode:
             self.lam.to_excel(writer, sheet_name="eigenvalues")
         logging.info("Saved eigenvalues for {} to {}".format(self.name, outpath))
 
+    def plot_tree(self):
+        """
+            Function to use graphviz to plot the tree
+        """
+        if not self.is_root():
+            raise ValueError("Should be called on the root node")
+        graph = self._draw_dot()
+        return graph
 
+    def __trace(self):
+        """
+            trace function similar to karpathys implementation
+        """
+        nodes, edges = set(), set()
+        def build(v):
+            if v not in nodes:
+                nodes.add(v)
+                for child in v.children:
+                    edges.add((child, v))
+                    build(child)
+
+        build(self)
+        return nodes, edges
+
+    def _draw_dot(self) -> Digraph:
+        """
+            DiGraph function similar to karpathy's version
+        """
+        dot = Digraph(format="svg", graph_attr={'rankdir': 'RL'})
+        nodes, edges = self.__trace()
+
+        for n in nodes:
+            uid = n.name
+            if n.is_leaf():
+                descr = "Values: {}".format(n.values)
+            else:
+                descr = "lambda: {}".format(n.lam) 
+            dot.node(name = uid, label = "{%s} | {%s}" % (uid, descr), shape="record")
+
+        for n1, n2 in edges:
+            dot.edge(n1.name, n2.name)
+        
+        return dot
 
     ####################
     # Outer Init Methods

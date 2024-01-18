@@ -19,11 +19,13 @@ if __name__=="__main__":
     ahp.check_integrity()
     ahp.calculate_tree()
     print("Final Results:\n{}".format(ahp.calculate_tree()))
+    treepl = ahp.plot_tree()
+    treepl.view("testview")
 
     # for c in ahp.children:
     #     c.plot_values()
     # ahp.plot_values()
-    ahp.plot_weights_tree()
+    # ahp.plot_weights_tree()
 
-    ahp.save_values("test_output.xlsx")
-    ahp.save_lambda("test_lambda.xlsx")
+    # ahp.save_values("test_output.xlsx")
+    # ahp.save_lambda("test_lambda.xlsx")
