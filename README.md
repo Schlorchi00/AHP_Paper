@@ -97,7 +97,7 @@ Possibilities exist for linear or quadratic scaling. If values for quadratic are
 
 ## Calculating a tree
 Example script is provided [here](./scripts/test_ahp.py) and can be run for example with the following command:
-`pyhon scripts/test_ahp.py --i data/scenario_1_a/tree/meaningfulness`
+`pyhon scripts/test_ahp.py --i data/scenario_1_a/cuboid/tree/meaningfulness`
 The only parameter is an input directory, from which the tree structure will be set up. The script runs four steps including consistency checks.
 
 1. Reading a tree from a directory structure. This checks for directory and spreadsheet naming conventions 
