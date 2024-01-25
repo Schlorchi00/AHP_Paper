@@ -19,13 +19,39 @@
                 // "-s", "176",
                 // "--name", "PLA_Virgin",
                 // "--value", "100",
-                // "--output", "data/test_output",
+                // "--output", "test_output.xlsx",
                 // "--weightnames", "0.25",
                 // "--weightinputs", "0.45",
                 // "-wi", "0.3"
                 // "--time"
                 "--input" , "data/input/tree/meaningfulness",
+                // "--input" , "/home/nico/src/AHP_Paper/data/input/preprocessing/mechanical/90_deg/Performance_90_PLA.xlsx",
+                // "--scaling"
+                // "--name", "PVA",
+                // "--value", "0.11663",
+                // "-wn", "0.5",
+                // "--name", "PLA_Virgin",
+                // "--value", "0.0349",
+                // "-wn", "0.5",
+                // "--input" , "something_else.xlsx",
+                // "--input" , "something.xlsx",
+                // "-n", "PLA_virgin",
+                // "-v", "0.0349",
+                // "-i", "data/input/cost_data/PLA_recycled.xlsx",
+                // "-s", "937",
+                // "-i", "data/input/cost_data/PLA_recycled_industrial.xlsx",
+                // "-s", "937",
+                // "-o", "data/input/preprocessing/economical"
             ]
+        },
+        {
+            "name": "Python: Debug Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "purpose": ["debug-test"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

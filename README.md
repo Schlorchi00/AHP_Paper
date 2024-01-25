@@ -16,6 +16,9 @@ Install `miniconda` according to the official instructions [here](https://docs.c
 Create an environment through the provided [environment.yml](./environment.yml) file by running `conda env create -f environment.yml`
 Ensure that pip is installed inside the local package (can be validated through executing `python`, `import pip`, `pip.__file__` and checking it is inside the environment path).
 
+### Activating the environment
+Conda environments can be activated with `conda activate <environment_name>`. The default name for the environment as part of the [environment yaml file](./environment.yml) is `ahp`
+
 ## Pip
 Installing dependences through pip can be done through running `pip install -r requirements.txt`, where [requirements.txt](./requirements.txt) contains a pip list of all necessary dependencies.
 
@@ -30,13 +33,23 @@ The package provides four main scripts for three processes of the AHP as defined
 2. The [preprocessing step](#preprocessing) - which prepares the provided files such that these can be used by the AHP process. Implemented in the file [`preprocessing.py`](./scripts/preprocessing.py)
 3. The [Tree calculation](#calculating-a-tree), which is the final step and implemented in [`test_ahp.py`](./scripts/test_ahp.py)
 
+An overview of the _directory_ structure of an exemplary scenario looks as follows and can be found in the [data folder](./data/)
+
+![Scenario Tree Overview](./docs/20240125_scenario_overview.png)
+
 ## Cost Calculation
 The cost calculation can be found in the [scripts](./scripts/cost_calculation.py) directory.
-Run from the base directory after activating the environment with:
+Run from the base directory after [activating the environment](#activating-the-environment) with:
 ```
     python scripts/cost_calculation.py -i <file> -s <scale> -n <name> -v <value> OPTIONAL -t -o <output_location>
 ```
-Can be run as a command line utility without changes to the code. Will append a linear scaling sheet, without quadratic options, explained [below](#scaling). 
+Can be run as a command line utility without changes to the code. Will append a linear scaling sheet, without quadratic options, explained [below](#scaling).
+Example files can be found in the [cost calculation subfolders](./data/scenario_1_a/cuboid/cost_data/) of each scenario.
+
+An overview of example files is shown below:
+
+![Example files for cost calculation](./docs/20240125_cost.png)
+
 Parameters are explained below
 
 ### Parameters
@@ -58,6 +71,11 @@ Run from the base directory after activating the environment with:
 Can be run as a command line utility without changes to the code.
 A scaling sheet is appended to the example file which can be found **path to example file**. Scaling options are explained [below](#scaling).
 Consistency checks will be performed as part of the script.
+
+An overview of example files is shown below:
+
+![Example files for preprocessing](./docs/20240125_preprocessing.png)
+
 Parameters are explained below
 
 ### Parameters
@@ -78,8 +96,9 @@ Possibilities exist for linear or quadratic scaling. If values for quadratic are
     * Threshold: Set a threshold value after which all parameters will be 0. E.g. in case of diameter, +- 5cm from optimal
 
 ## Calculating a tree
-Example script is provided [here](./scripts/test_ahp.py)
-The only parameter is an input directory, from which the tree structure will be set up. The script runs four steps including consistency checks
+Example script is provided [here](./scripts/test_ahp.py) and can be run for example with the following command:
+`pyhon scripts/test_ahp.py --i data/scenario_1_a/tree/meaningfulness`
+The only parameter is an input directory, from which the tree structure will be set up. The script runs four steps including consistency checks.
 
 1. Reading a tree from a directory structure. This checks for directory and spreadsheet naming conventions 
 2. Preparing a tree from the structure provided in the previous steps
@@ -87,7 +106,12 @@ The only parameter is an input directory, from which the tree structure will be 
 4. Calculating the final decision support tree
 
 The final result will be printed to the command line. 
+Inside the script are multiple options commented out that can be used for visualisation or outputting recorded files.
 Changes can be made in the script after the calculation. Weights and values can be plotted or printed through node convenience methods, see [example](/src/ahp/ahp_functions.py#L409) 
+
+An overview of the example structure of a tree is shown below:
+
+![Example tree structure for calculating an ahp](./docs/20240125_tree.png)
 
 ### Parameters
 
