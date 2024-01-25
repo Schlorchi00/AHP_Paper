@@ -113,6 +113,9 @@ An overview of the example structure of a tree is shown below:
 
 ![Example tree structure for calculating an ahp](./docs/20240125_tree.png)
 
+**CAREFUL** matching is performed over the names of the rows / columns in the spreadsheets and the filenames. e.g. children names have to correspond to column names. If a child node is called `human_health` in the `weights.xlsx` spreadsheet, the corresponding values spreadsheet also has to be called `human_health.xlsx`, and **NOTHING ELSE** . This is case sensitivie and also does not check for separators such as ` , . - _ /` ! Always double check naming conventions, these are the most likely source of error.
+This was done to reduce clutter in code, as string-matching and parsing code will greatly reduce readability and maintainability of source code for future use.
+
 ### Parameters
 
 * --input, -i: base directory for a tree setup. The tree should be structured prior to running the calculation. Will provide error checks
