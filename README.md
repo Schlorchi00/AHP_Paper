@@ -2,7 +2,7 @@
 
 Package to apply an AHP. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
 
-![Description of the image of the AHP structure](./docs/AHP_structure.jpg)
+![Description of the image of the AHP structure](./docs/AHP_structure.png)
 
 ## Preview of the AHP process used in this research
 ![Image of the AHP Process used in this research](./docs/testview.svg)
