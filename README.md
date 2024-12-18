@@ -2,10 +2,10 @@
 
 Package to apply an AHP. Project files [in the google drive folder](https://drive.google.com/drive/folders/17u5-oOsBx12wAZ7zGiRGsdAQbPqbG3Fh)
 
-![Description of the image of the AHP structure](./docs/AHP_package_utilization.jpg)
+![Description of the image of the AHP structure](./docs/AHP_usage.jpg)
 
 ## Preview of the AHP process used in this research
-![Image of the AHP Process used in this research](./docs/AHP_structure_new.jpg)
+![Image of the AHP Process used in this research](./docs/AHP_structure_screen.jpg)
 
 # Installation
 The programing structure of the code provided in this repository follows the [Good Research Code Practices](https://goodresearch.dev/) - Thanks [@PatrickMineault](https://github.com/patrickmineault/).
